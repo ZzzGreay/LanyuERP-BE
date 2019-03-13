@@ -55,23 +55,26 @@ enum PartState {
 // 维护工作记录
 WorkOrder {
 	machineId: String,
-	recorder: String // 记录者
-	efforts: List<WorkEffort>,
-	transportation: Transportation
+	// 记录者
+	recorderId: String 
+	efforts: List {
+		personId: String, // worker's id
+		startTime: Long, // epoch millis
+		endTime: Long, // epoch millis
+	},
+	// 出勤交通	
+	transportation: {
+		carId: String,
+		startKilometres: long,
+		endKilometres: long,
+	}
+
 }
 
 // 工作付出时间
 WorkEffort {
-	personId: String, // worker's id
-	startTime: Long, // epoch millis
-	endTime: Long, // epoch millis
+	
 }
 
-// 出勤交通
-Transportation {
-	carId: String,
-	startKilometres: long,
-	endKilometres: long,
-}
 
 

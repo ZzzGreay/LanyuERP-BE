@@ -7,82 +7,120 @@ const APIError = require('../utils/APIError');
  * 工作日志
  */
 const WorkLogSchema = new mongoose.Schema({
-  principal: {
+  // 日志负责人
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
   },
-  machine: {
+  // 维修现场
+  site: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Machine',
+    ref: 'Site',
     required: true,
   },
-  workLog: {
+  // 工作记录
+  records: [{
     required: true,
-    type: [{
-      worker: {
+    _id: false,
+    type: {
+      // 谁做的 可以多个
+      owners: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-      },
-      actions: [{
-        _id: false,
-        partId: {
-          type: String,
-          required: true,
-        },
-        //TODO: maybe change to ENUM?
-        action: {
-          type: String,
-          required: true,
-        }
       }],
-      // epoch seconds
-      startTime: {
-        type: Number,
+      // 哪个机器
+      machine: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Machine',
         required: true,
       },
-      endTime: {
-        type: Number,
+      // 机器上的哪个零件
+      part: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Part',
         required: true,
       },
-    }],
-  },
-  //去途 用车
-  forwardCommute: {
-    _id: false,
-    required: true,
-    type: {
-      carId: {
+      // 对这个零件做了啥 TODO: maybe change to ENUM?
+      action: {
         type: String,
         required: true,
       },
-      startMiles: {
+      // 几点开始
+      startEpochSeconds: {
         type: Number,
         required: true,
       },
-      endMiles: {
+      // 几点结束
+      endEpochSeconds: {
         type: Number,
         required: true,
       },
     },
-  },
-  //回途 用车
-  backCommute: {
+  }],
+  //前往现场 用车
+  toSiteCommute: {
     _id: false,
     required: true,
-    default: null,
     type: {
+      fromSite: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Site',
+        required: true,
+      },
+      toSite: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Site',
+        required: true,
+      },
       carId: {
         type: String,
         required: true,
       },
-      startMiles: {
+      startKilos: {
         type: Number,
         required: true,
       },
-      endMiles: {
+      endKilos: {
         type: Number,
+        required: true,
+      },
+      date: {
+        type: Date,
+        required: true,
+      },
+    },
+  },
+  //离开现场 用车
+  leaveSiteCommute: {
+    _id: false,
+    required: true,
+    default: null,
+    type: {
+      fromSite: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Site',
+        required: true,
+      },
+      toSite: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Site',
+        required: true,
+      },
+      carId: {
+        type: String,
+        required: true,
+      },
+      startKilos: {
+        type: Number,
+        required: true,
+      },
+      endKilos: {
+        type: Number,
+        required: true,
+      },
+      date: {
+        type: Date,
         required: true,
       },
     },
@@ -98,11 +136,11 @@ WorkLogSchema.method({
   transform() {
     const transformed = {};
     const fields = [
-      'principal',
-      'machine',
-      'workLog',
-      'forwardCommute',
-      'backCommute',
+      'owner',
+      'workSite',
+      'workRecords',
+      'toSiteCommute',
+      'leaveSiteCommute',
     ];
 
     fields.forEach((field) => {
@@ -119,9 +157,11 @@ WorkLogSchema.method({
 WorkLogSchema.query = {
   populateRefs() {
     return this
-      .populate('parts')
-      .populate('machine')
-      .populate('workLog');
+      .populate('owner')
+      .populate('workSite')
+      .populate('workRecords')
+      .populate('toSiteCommute')
+      .populate('leaveSiteCommute');
   },
 };
 
@@ -147,7 +187,7 @@ WorkLogSchema.statics = {
       }
 
       throw new APIError({
-        message: '客户不存在',
+        message: '日志不存在',
         status: httpStatus.NOT_FOUND,
       });
     } catch (error) {
@@ -162,8 +202,8 @@ WorkLogSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 30, name, email, role}) {
-    const options = omitBy({name, email, role}, isNil);
+  async list({page = 1, perPage = 30, owner, machine}) {
+    const options = omitBy({owner, machine}, isNil);
 
     return this.find(options)
       .sort({createdAt: -1})
@@ -172,39 +212,6 @@ WorkLogSchema.statics = {
       .exec();
   },
 
-  /**
-   * Return new validation error
-   * if error is a mongoose duplicate key error
-   *
-   * @param {Error} error
-   * @returns {Error|APIError}
-   */
-  checkDuplicateName(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
-      return new APIError({
-        message: '客户名称已存在',
-        errors: [
-          {
-            field: 'name',
-            location: 'body',
-            messages: ['客户已经存在'],
-          },
-        ],
-        status: httpStatus.CONFLICT,
-        isPublic: true,
-        stack: error.stack,
-      });
-    }
-    return error;
-  },
-
-  getClientTypes() {
-    return clientTypes;
-  },
-
-  getSourceTypes() {
-    return sourceTypes;
-  },
 };
 
 /**

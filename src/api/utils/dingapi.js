@@ -13,36 +13,46 @@ exports.login = (req) => new Promise(resolve => {
   HttpUtils.get("/gettoken", {
     "appkey": dingConfig.appkey,
     "appsecret": dingConfig.appsecret,
-  }, function (err, body) {
-    if (!err) {
+  }, function (getTokenError, getTokenResult) {
+    if (!getTokenError) {
+
+      console.log("\n getTokenResult: " +JSON.stringify(getTokenResult) + "\n");
+
+      // This body.authCode is generated from Client when they do Oauth through Ding Ding.
       let code = req.body.authCode;
-      let accessToken = body.access_token;
+      let accessToken = getTokenResult.access_token;
       //获取用户id
       HttpUtils.get("/user/getuserinfo", {
         "access_token": accessToken,
         "code": code,
-      }, function (err2, body2) {
-        if (!err2) {
+      }, function (getUserInfoError, getUserInfoResult) {
+        if (!getUserInfoError) {
+
+          console.log("\n getUserInfoResult: " + JSON.stringify(getUserInfoResult) + "\n");
+
           //获取用户详细信息
           HttpUtils.get("/user/get", {
             "access_token": accessToken,
-            "userid": body2.userid,
-          }, function (err3, body3) {
-            if (!err3) {
+            "userid": getUserInfoResult.userid,
+          }, function (getUserDetailError, getUserDetailResult) {
+            if (!getUserDetailError) {
+
+              console.log("\n getUserDetailResult: " + JSON.stringify(getUserDetailResult) + "\n");
+
               resolve({
-                userid: body2.userid,
-                name: body3.name,
+                userid: getUserInfoResult.userid,
+                name: getUserDetailResult.name,
               });
             } else {
-              console.err('获取用户信息失败');
+              console.error('获取用户信息失败');
             }
           });
         } else {
-          console.err('获取用户id失败');
+          console.error('获取用户id失败');
         }
       });
     } else {
-      console.err('获取access_token失败');
+      console.error('获取access_token失败');
     }
   });
 });

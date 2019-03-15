@@ -6,7 +6,7 @@ const HttpUtils = new Http(dingConfig.oapiHost);
 /**
  * return {userId, name}
  *
- * TODO: can make this return a promise
+ * Needs to return a promise to work with async functions.
  */
 exports.login = (req) => new Promise(resolve => {
   // 获取access_token

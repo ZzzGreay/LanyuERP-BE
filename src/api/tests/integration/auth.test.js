@@ -1,7 +1,7 @@
 /* eslint-disable arrow-body-style */
 const request = require('supertest');
 const httpStatus = require('http-status');
-const { expect } = require('chai');
+const {expect} = require('chai');
 const app = require('../../../index');
 const User = require('../../models/user.model');
 const RefreshToken = require('../../models/refreshToken.model');
@@ -164,7 +164,7 @@ describe('Authentication API', () => {
       await RefreshToken.create(refreshToken);
       return request(app)
         .post('/v1/auth/refresh-token')
-        .send({ email: dbUser.email, refreshToken: refreshToken.token })
+        .send({email: dbUser.email, refreshToken: refreshToken.token})
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.have.a.property('accessToken');
@@ -177,7 +177,7 @@ describe('Authentication API', () => {
       await RefreshToken.create(refreshToken);
       return request(app)
         .post('/v1/auth/refresh-token')
-        .send({ email: user.email, refreshToken: refreshToken.token })
+        .send({email: user.email, refreshToken: refreshToken.token})
         .expect(httpStatus.UNAUTHORIZED)
         .then((res) => {
           const code = res.body.code;

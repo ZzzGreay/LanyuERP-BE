@@ -123,7 +123,7 @@ WorkLogSchema.query = {
       .populate('machine')
       .populate('workLog');
   },
-}
+};
 
 /**
  * Statics

@@ -45,7 +45,7 @@ exports.ADMIN = ADMIN;
 exports.LOGGED_USER = LOGGED_USER;
 
 exports.authorize = (roles = User.roles) => (req, res, next) =>
-  passport.authenticate('jwt', { session: false }, handleJWT(req, res, next, roles))(
+  passport.authenticate('jwt', {session: false}, handleJWT(req, res, next, roles))(
     req,
     res,
     next

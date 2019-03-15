@@ -2,9 +2,9 @@
 /* eslint-disable no-unused-expressions */
 const request = require('supertest');
 const httpStatus = require('http-status');
-const { expect } = require('chai');
+const {expect} = require('chai');
 const sinon = require('sinon');
-const { some, omitBy, isNil } = require('lodash');
+const {some, omitBy, isNil} = require('lodash');
 const app = require('../../../index');
 const User = require('../../models/user.model');
 const JWT_EXPIRATION = require('../../../config/vars').jwtExpirationInterval;
@@ -20,7 +20,7 @@ async function format(user) {
   delete formated.password;
 
   // get users from database
-  const dbUser = (await User.findOne({ email: user.email })).transform();
+  const dbUser = (await User.findOne({email: user.email})).transform();
 
   // remove null and undefined properties
   return omitBy(dbUser, isNil);
@@ -186,7 +186,7 @@ describe('Users API', () => {
       return request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ page: 2, perPage: 1 })
+        .query({page: 2, perPage: 1})
         .expect(httpStatus.OK)
         .then((res) => {
           delete dbUsers.jonSnow.password;
@@ -206,7 +206,7 @@ describe('Users API', () => {
       return request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ email: dbUsers.jonSnow.email })
+        .query({email: dbUsers.jonSnow.email})
         .expect(httpStatus.OK)
         .then((res) => {
           delete dbUsers.jonSnow.password;
@@ -226,7 +226,7 @@ describe('Users API', () => {
       return request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ page: '?', perPage: 'whaat' })
+        .query({page: '?', perPage: 'whaat'})
         .expect(httpStatus.BAD_REQUEST)
         .then((res) => {
           const field = res.body.errors[0].field;
@@ -296,7 +296,7 @@ describe('Users API', () => {
     });
 
     it('should report error when logged user is not the same as the requested one', async () => {
-      const id = (await User.findOne({ email: dbUsers.branStark.email }))._id;
+      const id = (await User.findOne({email: dbUsers.branStark.email}))._id;
 
       return request(app)
         .get(`/v1/users/${id}`)
@@ -376,7 +376,7 @@ describe('Users API', () => {
     });
 
     it('should report error when logged user is not the same as the requested one', async () => {
-      const id = (await User.findOne({ email: dbUsers.branStark.email }))._id;
+      const id = (await User.findOne({email: dbUsers.branStark.email}))._id;
 
       return request(app)
         .put(`/v1/users/${id}`)
@@ -389,7 +389,7 @@ describe('Users API', () => {
     });
 
     it('should not replace the role of the user (not admin)', async () => {
-      const id = (await User.findOne({ email: dbUsers.jonSnow.email }))._id;
+      const id = (await User.findOne({email: dbUsers.jonSnow.email}))._id;
       const role = 'admin';
 
       return request(app)
@@ -412,7 +412,7 @@ describe('Users API', () => {
       return request(app)
         .patch(`/v1/users/${id}`)
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .send({ name })
+        .send({name})
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.name).to.be.equal(name);
@@ -446,7 +446,7 @@ describe('Users API', () => {
     });
 
     it('should report error when logged user is not the same as the requested one', async () => {
-      const id = (await User.findOne({ email: dbUsers.branStark.email }))._id;
+      const id = (await User.findOne({email: dbUsers.branStark.email}))._id;
 
       return request(app)
         .patch(`/v1/users/${id}`)
@@ -459,13 +459,13 @@ describe('Users API', () => {
     });
 
     it('should not update the role of the user (not admin)', async () => {
-      const id = (await User.findOne({ email: dbUsers.jonSnow.email }))._id;
+      const id = (await User.findOne({email: dbUsers.jonSnow.email}))._id;
       const role = 'admin';
 
       return request(app)
         .patch(`/v1/users/${id}`)
         .set('Authorization', `Bearer ${userAccessToken}`)
-        .send({ role })
+        .send({role})
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.role).to.not.be.equal(role);
@@ -500,7 +500,7 @@ describe('Users API', () => {
     });
 
     it('should report error when logged user is not the same as the requested one', async () => {
-      const id = (await User.findOne({ email: dbUsers.branStark.email }))._id;
+      const id = (await User.findOne({email: dbUsers.branStark.email}))._id;
 
       return request(app)
         .delete(`/v1/users/${id}`)

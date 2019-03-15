@@ -41,7 +41,7 @@ RefreshTokenSchema.statics = {
   generate(user) {
     const userId = user._id;
     const dingId = user.dingId;
-    const name = user.dingId;
+    const name = user.name;
     const token = `${userId}.${crypto.randomBytes(40).toString('hex')}`;
     const expires = moment().add(30, 'days').toDate();
     const tokenObject = new RefreshToken({token, userId, dingId, name, expires});
@@ -55,4 +55,4 @@ RefreshTokenSchema.statics = {
  * @typedef RefreshToken
  */
 const RefreshToken = mongoose.model('RefreshToken', RefreshTokenSchema);
-module.exports = RefreshToken
+module.exports = RefreshToken;

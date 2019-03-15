@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
-const { mongo, env } = require('./vars');
+const {mongo, env} = require('./vars');
 const uniqueValidator = require('mongoose-unique-validator');
 
 // set mongoose Promise to Bluebird
 mongoose.Promise = Promise;
 
 // https://www.npmjs.com/package/mongoose-unique-validator
-mongoose.plugin(uniqueValidator)
+mongoose.plugin(uniqueValidator);
 
 // Exit application on error
 mongoose.connection.on('error', (err) => {
@@ -20,11 +20,11 @@ if (env === 'development') {
 }
 
 /**
-* Connect to mongo db
-*
-* @returns {object} Mongoose connection
-* @public
-*/
+ * Connect to mongo db
+ *
+ * @returns {object} Mongoose connection
+ * @public
+ */
 exports.connect = () => {
   mongoose.connect(mongo.uri, {
     keepAlive: 1,

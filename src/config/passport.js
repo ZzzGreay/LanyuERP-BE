@@ -1,6 +1,6 @@
-const { Strategy } = require('passport-jwt');
-const { ExtractJwt } = require('passport-jwt');
-const { jwtSecret } = require('./vars');
+const {Strategy} = require('passport-jwt');
+const {ExtractJwt} = require('passport-jwt');
+const {jwtSecret} = require('./vars');
 const User = require('../api/models/user.model');
 
 const options = {

@@ -22,7 +22,7 @@ Http.prototype.get = function (path, params, callback) {
   request(obj, function (err, response, body) {
     callback && callback(err, body);
   });
-}
+};
 
 Http.prototype.post = function (path, params, postData, callback) {
   const url = this.joinParams(path, params);
@@ -36,7 +36,7 @@ Http.prototype.post = function (path, params, postData, callback) {
   request(obj, function (err, response, body) {
     callback && callback(err, body);
   });
-}
+};
 
 Http.prototype.joinParams = function (path, params) {
   let url = this.domain + path;
@@ -51,6 +51,6 @@ Http.prototype.joinParams = function (path, params) {
     }
   }
   return url;
-}
+};
 
 module.exports = Http;

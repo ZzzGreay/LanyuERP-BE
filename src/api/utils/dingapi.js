@@ -5,12 +5,14 @@ const HttpUtils = new Http(dingConfig.oapiHost);
 
 /**
  * return {userId, name}
+ *
+ * TODO: can make this return a promise
  */
-exports.login = async () => {
+exports.login = (req) => new Promise(resolve => {
   // 获取access_token
   HttpUtils.get("/gettoken", {
-    "appkey": config.appkey,
-    "appsecret": config.appsecret,
+    "appkey": dingConfig.appkey,
+    "appsecret": dingConfig.appsecret,
   }, function (err, body) {
     if (!err) {
       let code = req.body.authCode;
@@ -27,10 +29,10 @@ exports.login = async () => {
             "userid": body2.userid,
           }, function (err3, body3) {
             if (!err3) {
-              return {
+              resolve({
                 userid: body2.userid,
                 name: body3.name,
-              };
+              });
             } else {
               console.err('获取用户信息失败');
             }
@@ -43,4 +45,4 @@ exports.login = async () => {
       console.err('获取access_token失败');
     }
   });
-}
+});

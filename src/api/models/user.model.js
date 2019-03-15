@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
-const httpStatus = require('http-status')
-const {omitBy, isNil} = require('lodash')
-const moment = require('moment-timezone')
-const jwt = require('jwt-simple')
-const APIError = require('../utils/APIError')
-const {jwtSecret, jwtExpirationInterval} = require('../../config/vars')
+const mongoose = require('mongoose');
+const httpStatus = require('http-status');
+const {omitBy, isNil} = require('lodash');
+const moment = require('moment-timezone');
+const jwt = require('jwt-simple');
+const APIError = require('../utils/APIError');
+const {jwtSecret, jwtExpirationInterval} = require('../../config/vars');
 
 /**
  * 用户
@@ -28,21 +28,21 @@ const UserSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-})
+});
 
 /**
  * Methods for a user instance
  */
 UserSchema.method({
   transform() {
-    const transformed = {}
-    const fields = ['dingId', 'name', 'lastLoginTime']
+    const transformed = {};
+    const fields = ['dingId', 'name', 'lastLoginTime'];
 
     fields.forEach((field) => {
-      transformed[field] = this[field]
-    })
+      transformed[field] = this[field];
+    });
 
-    return transformed
+    return transformed;
   },
 
   token() {
@@ -50,18 +50,15 @@ UserSchema.method({
       exp: moment().add(jwtExpirationInterval, 'minutes').unix(),
       iat: moment().unix(),
       sub: this._id,
-    }
-    return jwt.encode(playload, jwtSecret)
+    };
+    return jwt.encode(playload, jwtSecret);
   },
-})
+});
 
 /**
  * Statics
  */
 UserSchema.statics = {
-
-  roles,
-
   /**
    * Get user by dingId
    */
@@ -77,7 +74,7 @@ UserSchema.statics = {
    * @returns {Promise<User[]>}
    */
   list({page = 1, perPage = 30, name, email, role}) {
-    const options = omitBy({name, email, role}, isNil)
+    const options = omitBy({name, email, role}, isNil);
 
     return this
       .find(options)
@@ -85,7 +82,7 @@ UserSchema.statics = {
       .skip(perPage * (page - 1))
       .limit(perPage)
       .populateRefs()
-      .exec()
+      .exec();
   },
 
   /**
@@ -108,14 +105,14 @@ UserSchema.statics = {
         status: httpStatus.CONFLICT,
         isPublic: true,
         stack: error.stack,
-      })
+      });
     }
-    return error
+    return error;
   },
 
-}
+};
 
 /**
  * @typedef User
  */
-module.exports = mongoose.model('User', UserSchema)
+module.exports = mongoose.model('User', UserSchema);

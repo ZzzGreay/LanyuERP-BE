@@ -4,17 +4,6 @@ const controller = require('../../controllers/auth.controller');
 const router = express.Router();
 
 /**
- * @api {post} v1/auth/register Register
- * @apiDescription Register a new user
- * @apiVersion 1.0.0
- * @apiName Register
- * @apiGroup Auth
- * @apiPermission public
- *
- */
-router.route('/register').post(controller.register);
-
-/**
  * @api {post} v1/auth/login Login
  * @apiDescription Get an accessToken
  * @apiVersion 1.0.0

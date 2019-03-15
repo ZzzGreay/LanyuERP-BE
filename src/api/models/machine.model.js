@@ -81,7 +81,7 @@ MachineSchema.query = {
       .populate('parts');
     //.populate({ path: 'parts', select: ['realname', 'username'] })
   },
-}
+};
 
 /**
  * Statics

@@ -8,10 +8,10 @@ const APIError = require('../utils/APIError');
  */
 const WorkLogSchema = new mongoose.Schema({
   // 日志负责人
-  owner: {
+  owners: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-  },
+  }],
   // 维修现场
   site: {
     type: mongoose.Schema.Types.ObjectId,
@@ -19,10 +19,8 @@ const WorkLogSchema = new mongoose.Schema({
     required: true,
   },
   // 工作记录
-  records: [{
-    required: true,
-    _id: false,
-    type: {
+  records: {
+    type:[{
       // 谁做的 可以多个
       owners: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -56,19 +54,14 @@ const WorkLogSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
-    },
-  }],
+    }],
+  },
   //前往现场 用车
   toSiteCommute: {
     _id: false,
     required: true,
     type: {
       fromSite: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Site',
-        required: true,
-      },
-      toSite: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Site',
         required: true,
@@ -95,13 +88,8 @@ const WorkLogSchema = new mongoose.Schema({
   leaveSiteCommute: {
     _id: false,
     required: true,
-    default: null,
+    default: {},
     type: {
-      fromSite: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Site',
-        required: true,
-      },
       toSite: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Site',
@@ -136,9 +124,10 @@ WorkLogSchema.method({
   transform() {
     const transformed = {};
     const fields = [
-      'owner',
-      'workSite',
-      'workRecords',
+      'id',
+      'owners',
+      'site',
+      'records',
       'toSiteCommute',
       'leaveSiteCommute',
     ];
@@ -157,9 +146,9 @@ WorkLogSchema.method({
 WorkLogSchema.query = {
   populateRefs() {
     return this
-      .populate('owner')
-      .populate('workSite')
-      .populate('workRecords')
+      .populate('owners')
+      .populate('site')
+      .populate('records')
       .populate('toSiteCommute')
       .populate('leaveSiteCommute');
   },

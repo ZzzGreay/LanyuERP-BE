@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['dingId', 'name', 'lastLoginTime'];
+    const fields = ['id', 'dingId', 'name', 'lastLoginTime'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
@@ -78,7 +78,7 @@ UserSchema.statics = {
 
     return this
       .find(options)
-      .sort({createdAt: -1})
+      .sort({name: 1})
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();

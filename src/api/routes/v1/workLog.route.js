@@ -1,6 +1,6 @@
 const express = require('express');
 const controller = require('../../controllers/workLog.controller');
-const { authorize, ADMIN, LOGGED_USER } = require('../../middlewares/auth');
+const {authorize, LOGGED_USER} = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -12,14 +12,17 @@ router.param('workLogId', controller.load);
 
 router
   .route('/')
-  .get(authorize(ADMIN), controller.list)
-  .post(authorize(ADMIN), controller.create);
+  .get(authorize(LOGGED_USER), controller.list)
+  .post(authorize(LOGGED_USER), controller.create);
+
+router
+  .route('/owner/:ownerId')
+  .get(authorize(LOGGED_USER), controller.getWorkLogsForOwner);
 
 router
   .route('/:workLogId')
   .get(authorize(LOGGED_USER), controller.get)
   .patch(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
-
 
 module.exports = router;

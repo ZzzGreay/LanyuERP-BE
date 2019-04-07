@@ -58,7 +58,7 @@ exports.list = async (req, res, next) => {
   try {
     const workLogs = await WorkLog.list(req.query);
     const transformedWorkLogs = workLogs.map(workLog => workLog.transform());
-    res.json(transformedWorkLogs);
+    res.json({workLogs: transformedWorkLogs});
   } catch (error) {
     next(error);
   }
@@ -72,4 +72,19 @@ exports.remove = (req, res, next) => {
   const workLog = req.locals.workLog;
 
   workLog.remove().then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+};
+
+
+/**
+ * Get workLogs for user
+ * @public
+ */
+exports.getWorkLogsForOwner = async (req, res, next) => {
+  try {
+    const workLogsForUser = await WorkLog.list({'owners': req.params.ownerId});
+    const transformedWorkLogsForUser = workLogsForUser.map(workLog => workLog.transform());
+    res.json({workLogs: transformedWorkLogsForUser});
+  } catch (error) {
+    next(error);
+  }
 };

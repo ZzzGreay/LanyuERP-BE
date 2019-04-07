@@ -20,7 +20,7 @@ const WorkLogSchema = new mongoose.Schema({
   },
   // 工作记录
   records: {
-    type:[{
+    type: [{
       // 谁做的 可以多个
       owners: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -59,58 +59,46 @@ const WorkLogSchema = new mongoose.Schema({
   //前往现场 用车
   toSiteCommute: {
     _id: false,
-    required: true,
-    type: {
-      fromSite: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Site',
-        required: true,
-      },
-      carId: {
-        type: String,
-        required: true,
-      },
-      startKilos: {
-        type: Number,
-        required: true,
-      },
-      endKilos: {
-        type: Number,
-        required: true,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
+    fromSite: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Site',
+      required: true,
+    },
+    carId: {
+      type: String,
+      required: true,
+    },
+    startKilos: {
+      type: Number,
+      required: true,
+    },
+    endKilos: {
+      type: Number,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
     },
   },
   //离开现场 用车
   leaveSiteCommute: {
     _id: false,
-    required: true,
-    default: {},
-    type: {
-      toSite: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Site',
-        required: true,
-      },
-      carId: {
-        type: String,
-        required: true,
-      },
-      startKilos: {
-        type: Number,
-        required: true,
-      },
-      endKilos: {
-        type: Number,
-        required: true,
-      },
-      date: {
-        type: Date,
-        required: true,
-      },
+    toSite: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Site',
+    },
+    carId: {
+      type: String,
+    },
+    startKilos: {
+      type: Number,
+    },
+    endKilos: {
+      type: Number,
+    },
+    date: {
+      type: Date,
     },
   },
 }, {
@@ -149,8 +137,8 @@ WorkLogSchema.query = {
       .populate('owners')
       .populate('site')
       .populate('records')
-      .populate('toSiteCommute')
-      .populate('leaveSiteCommute');
+      .populate({path: 'toSiteCommute.fromSite', select: ['id', 'name']})
+      .populate({path: 'leaveSiteCommute.toSite', select: ['id', 'name']});
   },
 };
 
@@ -191,13 +179,14 @@ WorkLogSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  async list({page = 1, perPage = 30, owner, machine}) {
-    const options = omitBy({owner, machine}, isNil);
+  async list({page = 1, perPage = 30, ...props}) {
+    const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({createdAt: -1})
+      .sort({updatedAt: 1})
       .skip(perPage * (page - 1))
       .limit(perPage)
+      .populateRefs()
       .exec();
   },
 

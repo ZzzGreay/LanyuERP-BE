@@ -18,44 +18,6 @@ const WorkLogSchema = new mongoose.Schema({
     ref: 'Site',
     required: true,
   },
-  // 工作记录
-  records: {
-    type: [{
-      // 谁做的 可以多个
-      owners: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-      }],
-      // 哪个机器
-      machine: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Machine',
-        required: true,
-      },
-      // 机器上的哪个零件
-      part: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Part',
-        required: true,
-      },
-      // 对这个零件做了啥 TODO: maybe change to ENUM?
-      action: {
-        type: String,
-        required: true,
-      },
-      // 几点开始
-      startEpochSeconds: {
-        type: Number,
-        required: true,
-      },
-      // 几点结束
-      endEpochSeconds: {
-        type: Number,
-        required: true,
-      },
-    }],
-  },
   //前往现场 用车
   toSiteCommute: {
     _id: false,
@@ -115,7 +77,6 @@ WorkLogSchema.method({
       'id',
       'owners',
       'site',
-      'records',
       'toSiteCommute',
       'leaveSiteCommute',
     ];
@@ -136,7 +97,6 @@ WorkLogSchema.query = {
     return this
       .populate('owners')
       .populate('site')
-      .populate('records')
       .populate({path: 'toSiteCommute.fromSite', select: ['id', 'name']})
       .populate({path: 'leaveSiteCommute.toSite', select: ['id', 'name']});
   },

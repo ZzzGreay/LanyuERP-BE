@@ -1,0 +1,90 @@
+const httpStatus = require('http-status');
+const WorkItem = require('../models/workItem.model');
+const {handler: errorHandler} = require('../middlewares/error');
+
+/**
+ * Load workItem and append to req.
+ * @public
+ */
+exports.load = async (req, res, next, id) => {
+  try {
+    const workItem = await WorkItem.get(id);
+    req.locals = {workItem};
+    return next();
+  } catch (error) {
+    return errorHandler(error, req, res);
+  }
+};
+
+/**
+ * Get workItem
+ * @public
+ */
+exports.get = (req, res) => res.json(req.locals.workItem.transform());
+
+/**
+ * Create new workItem
+ * @public
+ */
+exports.create = async (req, res, next) => {
+  try {
+    const workItem = new WorkItem(req.body);
+    const savedWorkItem = await workItem.save();
+    res.status(httpStatus.CREATED);
+    res.json({createdWorkItem: savedWorkItem.transform()});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Update existing workItem
+ * @public
+ */
+exports.update = (req, res, next) => {
+  const workItem = Object.assign(req.locals.workItem, req.body);
+
+  workItem
+    .save()
+    .then(savedWorkItem => res.json({updatedWorkItem: savedWorkItem.transform()}))
+    .catch(e => next(e));
+};
+
+/**
+ * Get workItem list
+ * @public
+ */
+exports.list = async (req, res, next) => {
+  try {
+    const workItems = await WorkItem.list(req.query);
+    const transformedWorkItems = workItems.map(workItem => workItem.transform());
+    res.json({workItems: transformedWorkItems});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Delete workItem
+ * @public
+ */
+exports.remove = (req, res, next) => {
+  const workItem = req.locals.workItem;
+
+  workItem.remove().then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+};
+
+
+/**
+ * Get workItems for user
+ * @public
+ */
+exports.getWorkItemsInWorkLog = async (req, res, next) => {
+  try {
+    const workItemsInWorkLog = await WorkItem.list({'workLogId': req.params.workLogId});
+    const transformedWorkItemsInWorkLog= workItemsInWorkLog.map(workItem => workItem.transform());
+    res.json({workItems: transformedWorkItemsInWorkLog});
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,13 +1,13 @@
 const express = require('express');
-const controller = require('../../controllers/workLog.controller');
+const controller = require('../../controllers/workItem.controller');
 const {authorize, LOGGED_USER} = require('../../middlewares/auth');
 
 const router = express.Router();
 
 /**
- * Load workLog when API with workLogId route parameter is hit
+ * Load workItem when API with workItemId route parameter is hit
  */
-router.param('workLogId', controller.load);
+router.param('workItemId', controller.load);
 
 
 router
@@ -16,11 +16,11 @@ router
   .post(authorize(LOGGED_USER), controller.create);
 
 router
-  .route('/owner/:ownerId')
-  .get(authorize(LOGGED_USER), controller.getWorkLogsForOwner);
+  .route('/workLog/:workLogId')
+  .get(authorize(LOGGED_USER), controller.getWorkItemsInWorkLog);
 
 router
-  .route('/:workLogId')
+  .route('/:workItemId')
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)
   .post(authorize(LOGGED_USER), controller.update)

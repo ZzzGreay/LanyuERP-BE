@@ -31,7 +31,7 @@ exports.create = async (req, res, next) => {
     const workLog = new WorkLog(req.body);
     const savedWorkLog = await workLog.save();
     res.status(httpStatus.CREATED);
-    res.json(savedWorkLog.transform());
+    res.json({createdWorkLog: savedWorkLog.transform()});
   } catch (error) {
     next(error);
   }
@@ -46,8 +46,8 @@ exports.update = (req, res, next) => {
 
   workLog
     .save()
-    .then(savedWorkLog => res.json(savedWorkLog.transform()))
-    .catch(next(e));
+    .then(savedWorkLog => res.json({updatedWorkLog: savedWorkLog.transform()}))
+    .catch(e => next(e));
 };
 
 /**

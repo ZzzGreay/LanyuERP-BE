@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
-const partCategories = ['1'];
+const partCategories = ['零件', '仪器'];
 const partStates = ['入库'];
 const partHostTypes = ['仓库', '售后', '仪器'];
 
@@ -12,7 +12,12 @@ const partHostTypes = ['仓库', '售后', '仪器'];
  */
 const PartSchema = new mongoose.Schema({
   //编码
-  id: {
+  partId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
     type: String,
     required: true,
     unique: true,
@@ -27,17 +32,15 @@ const PartSchema = new mongoose.Schema({
     enum: partStates,
     default: partStates[0],
   },
-  //配件持有者
-  host: {
-    type: {
-      type: String,
-      required: true,
-      enum: partHostTypes,
-    },
-    id: {
-      type: String,
-      required: true,
-    },
+  //1. 配件不在机器上
+  site: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Site',
+  },
+  //2. 配件在机器上
+  machine: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Part',
   }
 }, {
   timestamps: true,
@@ -54,11 +57,12 @@ PartSchema.method({
     const transformed = {};
     const fields = [
       'id',
+      'partId',
       'name',
-      'type',
-      'source',
-      'addresses',
-      'contacts',
+      'category',
+      'state',
+      'site',
+      'machine',
     ];
 
     fields.forEach((field) => {
@@ -68,6 +72,17 @@ PartSchema.method({
     return transformed;
   },
 });
+
+/**
+ * Populate reference fields.
+ */
+PartSchema.query = {
+  populateRefs() {
+    return this
+      .populate('site')
+      .populate('machine');
+  },
+};
 
 /**
  * Statics
@@ -114,40 +129,6 @@ PartSchema.statics = {
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
-  },
-
-  /**
-   * Return new validation error
-   * if error is a mongoose duplicate key error
-   *
-   * @param {Error} error
-   * @returns {Error|APIError}
-   */
-  checkDuplicateName(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
-      return new APIError({
-        message: '客户名称已存在',
-        errors: [
-          {
-            field: 'name',
-            location: 'body',
-            messages: ['客户已经存在'],
-          },
-        ],
-        status: httpStatus.CONFLICT,
-        isPublic: true,
-        stack: error.stack,
-      });
-    }
-    return error;
-  },
-
-  getClientTypes() {
-    return clientTypes;
-  },
-
-  getSourceTypes() {
-    return sourceTypes;
   },
 };
 

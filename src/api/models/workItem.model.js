@@ -3,14 +3,15 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
+const workTypes = ['沟通', '维护', '修理', '安装', '更换'];
+
 /**
  * 工作事项 隶属于一个工作日志
  */
 const WorkItemSchema = new mongoose.Schema({
   // 隶属于一个工作日志
   workLogId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'WorkLog',
+    type: String,
     required: true,
   },
   // 谁做的 可以多个
@@ -19,33 +20,39 @@ const WorkItemSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   }],
+  // 工作类型
+  workType: {
+    type: String,
+    enum: workTypes,
+    required: true,
+  },
   // 哪个机器
   machine: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Machine',
   },
-  // 机器上的哪个零件
+  // 机器上原有零件
   part: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Part',
   },
-  // 零件的处理方式 TODO: maybe a ENUM?
-  action: {
-    type: String,
-    required: true,
+  // 安装/更换新的零件
+  newPart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Part',
   },
-  // 描述
+  // 备注
   description: {
     type: String,
   },
-  // 几点开始
-  startEpochSeconds: {
-    type: Number,
+  // 开始时间
+  startTime: {
+    type: Date,
     required: true,
   },
-  // 几点结束
-  endEpochSeconds: {
-    type: Number,
+  // 结束时间
+  endTime: {
+    type: Date,
     required: true,
   },
 }, {
@@ -62,12 +69,13 @@ WorkItemSchema.method({
       'id',
       'workLogId',
       'owners',
+      'workType',
       'machine',
       'part',
-      'action',
+      'newPart',
       'description',
-      'startEpochSeconds',
-      'endEpochSeconds',
+      'startTime',
+      'endTime',
     ];
 
     fields.forEach((field) => {
@@ -85,7 +93,9 @@ WorkItemSchema.query = {
   populateRefs() {
     return this
       .populate('owners')
+      .populate('machine')
       .populate('part')
+      .populate('newPart')
   },
 };
 
@@ -128,6 +138,10 @@ WorkItemSchema.statics = {
       .limit(perPage)
       .populateRefs()
       .exec();
+  },
+
+  getWorkTypes() {
+    return workTypes;
   },
 
 };

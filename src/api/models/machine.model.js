@@ -11,7 +11,12 @@ const machineStates = ['初始化', '组装中', '运行', '维护'];
  */
 const MachineSchema = new mongoose.Schema({
   //机器编码
-  id: {
+  machineId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
     type: String,
     required: true,
     unique: true,
@@ -30,21 +35,13 @@ const MachineSchema = new mongoose.Schema({
   },
   //机器位置
   location: {
-    _id: false,
-    address: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-    },
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Site',
   },
   //机器配件
   parts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Part',
-    default: [],
   }],
 }, {
   timestamps: true,
@@ -58,6 +55,8 @@ MachineSchema.method({
     const transformed = {};
     const fields = [
       'id',
+      'machineId',
+      'name',
       'category',
       'state',
       'location',
@@ -78,8 +77,8 @@ MachineSchema.method({
 MachineSchema.query = {
   populateRefs() {
     return this
+      .populate('location')
       .populate('parts');
-    //.populate({ path: 'parts', select: ['realname', 'username'] })
   },
 };
 
@@ -128,40 +127,6 @@ MachineSchema.statics = {
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
-  },
-
-  /**
-   * Return new validation error
-   * if error is a mongoose duplicate key error
-   *
-   * @param {Error} error
-   * @returns {Error|APIError}
-   */
-  checkDuplicateName(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
-      return new APIError({
-        message: '客户名称已存在',
-        errors: [
-          {
-            field: 'name',
-            location: 'body',
-            messages: ['客户已经存在'],
-          },
-        ],
-        status: httpStatus.CONFLICT,
-        isPublic: true,
-        stack: error.stack,
-      });
-    }
-    return error;
-  },
-
-  getClientTypes() {
-    return clientTypes;
-  },
-
-  getSourceTypes() {
-    return sourceTypes;
   },
 };
 

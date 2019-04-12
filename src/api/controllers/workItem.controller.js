@@ -4,7 +4,6 @@ const {handler: errorHandler} = require('../middlewares/error');
 
 /**
  * Load workItem and append to req.
- * @public
  */
 exports.load = async (req, res, next, id) => {
   try {
@@ -18,13 +17,11 @@ exports.load = async (req, res, next, id) => {
 
 /**
  * Get workItem
- * @public
  */
 exports.get = (req, res) => res.json(req.locals.workItem.transform());
 
 /**
  * Create new workItem
- * @public
  */
 exports.create = async (req, res, next) => {
   try {
@@ -39,7 +36,6 @@ exports.create = async (req, res, next) => {
 
 /**
  * Update existing workItem
- * @public
  */
 exports.update = (req, res, next) => {
   const workItem = Object.assign(req.locals.workItem, req.body);
@@ -52,7 +48,6 @@ exports.update = (req, res, next) => {
 
 /**
  * Get workItem list
- * @public
  */
 exports.list = async (req, res, next) => {
   try {
@@ -66,7 +61,6 @@ exports.list = async (req, res, next) => {
 
 /**
  * Delete workItem
- * @public
  */
 exports.remove = (req, res, next) => {
   const workItem = req.locals.workItem;
@@ -77,13 +71,23 @@ exports.remove = (req, res, next) => {
 
 /**
  * Get workItems for user
- * @public
  */
 exports.getWorkItemsInWorkLog = async (req, res, next) => {
   try {
     const workItemsInWorkLog = await WorkItem.list({'workLogId': req.params.workLogId});
-    const transformedWorkItemsInWorkLog= workItemsInWorkLog.map(workItem => workItem.transform());
+    const transformedWorkItemsInWorkLog = workItemsInWorkLog.map(workItem => workItem.transform());
     res.json({workItems: transformedWorkItemsInWorkLog});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get workTypes
+ */
+exports.getWorkTypes = async (req, res, next) => {
+  try {
+    res.json({workTypes: WorkItem.getWorkTypes()});
   } catch (error) {
     next(error);
   }

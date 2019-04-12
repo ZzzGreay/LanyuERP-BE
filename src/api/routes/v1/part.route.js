@@ -1,15 +1,13 @@
 const express = require('express');
-const controller = require('../../controllers/workItem.controller');
+const controller = require('../../controllers/part.controller');
 const {authorize, LOGGED_USER} = require('../../middlewares/auth');
 
 const router = express.Router();
 
 /**
- * Load workItem when API with workItemId route parameter is hit
+ * Load part when API with partId route parameter is hit
  */
-router.param('workItemId', controller.load);
-
-router.route('/workTypes').get(authorize(LOGGED_USER), controller.getWorkTypes);
+router.param('partId', controller.load);
 
 router
   .route('/')
@@ -17,11 +15,7 @@ router
   .post(authorize(LOGGED_USER), controller.create);
 
 router
-  .route('/workLog/:workLogId')
-  .get(authorize(LOGGED_USER), controller.getWorkItemsInWorkLog);
-
-router
-  .route('/:workItemId')
+  .route('/:partId')
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)
   .post(authorize(LOGGED_USER), controller.update)

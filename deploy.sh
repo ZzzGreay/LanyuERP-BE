@@ -1,12 +1,12 @@
 #!/bin/bash
-docker build -t danielfsousa/express-rest-es2017-boilerplate .
-docker push danielfsousa/express-rest-es2017-boilerplate
+docker build -t welkinlan/lanyuerp-be .
+docker push welkinlan/lanyuerp-be
 
 ssh deploy@$DEPLOY_SERVER << EOF
-docker pull danielfsousa/express-rest-es2017-boilerplate
-docker stop api-boilerplate || true
-docker rm api-boilerplate || true
-docker rmi danielfsousa/express-rest-es2017-boilerplate:current || true
-docker tag danielfsousa/express-rest-es2017-boilerplate:latest danielfsousa/express-rest-es2017-boilerplate:current
-docker run -d --restart always --name api-boilerplate -p 3000:3000 danielfsousa/express-rest-es2017-boilerplate:current
+docker pull welkinlan/lanyuerp-be
+docker stop lanyuerp-be || true
+docker rm lanyuerp-be || true
+docker rmi welkinlan/lanyuerp-be:current || true
+docker tag welkinlan/lanyuerp-be:latest welkinlan/lanyuerp-be:current
+docker run -d --restart always --name lanyuerp-be -p 3000:3000 welkinlan/lanyuerp-be:current
 EOF

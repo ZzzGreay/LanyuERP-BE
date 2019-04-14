@@ -39,13 +39,13 @@ exports.create = async (req, res, next) => {
  */
 exports.update = (req, res, next) => {
   const workItem = Object.assign(req.locals.workItem, req.body);
-
+  console.log('更新事项' + JSON.stringify(req) + "\n");
   workItem
     .save()
     .then(savedWorkItem => res.json({updatedWorkItem: savedWorkItem.transform()}))
     .catch(e => {
-      console.error('更新事项失败' + JSON.stringify(req) + "\n");
-      console.error('错误' + JSON.stringify(e) + "\n");
+      console.log('更新事项失败' + JSON.stringify(req) + "\n");
+      console.log('错误' + JSON.stringify(e) + "\n");
       next(e)
     });
 };

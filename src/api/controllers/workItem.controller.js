@@ -43,7 +43,11 @@ exports.update = (req, res, next) => {
   workItem
     .save()
     .then(savedWorkItem => res.json({updatedWorkItem: savedWorkItem.transform()}))
-    .catch(e => next(e));
+    .catch(e => {
+      console.error('更新事项失败' + JSON.stringify(req) + "\n");
+      console.error('错误' + JSON.stringify(e) + "\n");
+      next(e)
+    });
 };
 
 /**

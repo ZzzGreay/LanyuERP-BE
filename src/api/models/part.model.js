@@ -17,11 +17,6 @@ const PartSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   category: {
     type: String,
     enum: partCategories,
@@ -58,7 +53,6 @@ PartSchema.method({
     const fields = [
       'id',
       'partId',
-      'name',
       'category',
       'state',
       'site',

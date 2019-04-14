@@ -16,11 +16,6 @@ const MachineSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   //机器类型
   category: {
     type: String,
@@ -56,7 +51,6 @@ MachineSchema.method({
     const fields = [
       'id',
       'machineId',
-      'name',
       'category',
       'state',
       'location',

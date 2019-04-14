@@ -3,9 +3,7 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
-const partCategories = ['零件', '仪器'];
 const partStates = ['入库'];
-const partHostTypes = ['仓库', '售后', '仪器'];
 
 /**
  * 配件
@@ -17,10 +15,9 @@ const PartSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  category: {
+  type: {
     type: String,
-    enum: partCategories,
-    default: partCategories[0],
+    required: true,
   },
   state: {
     type: String,
@@ -53,7 +50,7 @@ PartSchema.method({
     const fields = [
       'id',
       'partId',
-      'category',
+      'type',
       'state',
       'site',
       'machine',

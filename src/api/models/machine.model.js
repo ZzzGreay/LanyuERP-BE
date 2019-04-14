@@ -3,7 +3,6 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
-const machineCategories = ['FB-1000'];
 const machineStates = ['初始化', '组装中', '运行', '维护'];
 
 /**
@@ -17,10 +16,9 @@ const MachineSchema = new mongoose.Schema({
     unique: true,
   },
   //机器类型
-  category: {
+  type: {
     type: String,
-    enum: machineCategories,
-    default: machineCategories[0],
+    required: true,
   },
   //机器状态
   state: {
@@ -51,7 +49,7 @@ MachineSchema.method({
     const fields = [
       'id',
       'machineId',
-      'category',
+      'type',
       'state',
       'location',
       'parts',

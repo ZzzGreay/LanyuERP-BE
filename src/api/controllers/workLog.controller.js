@@ -27,6 +27,7 @@ exports.get = (req, res) => res.json(req.locals.workLog.transform());
  * @public
  */
 exports.create = async (req, res, next) => {
+  console.log(req.body);
   try {
     const workLog = new WorkLog(req.body);
     const savedWorkLog = await workLog.save();

@@ -21,16 +21,12 @@ const app = express();
 // request logging. dev: console | production: file
 app.use(morgan(logs));
 
-app.use(function (req, res) {
-  console.log("THE BODY +\n" + JSON.stringify(req.body, null, 2));
-})
-
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // hook morganBody to express app
-morganBody(app);
+// morganBody(app);
 
 // gzip compression
 app.use(compress());

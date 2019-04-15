@@ -21,9 +21,12 @@ const app = express();
 // request logging. dev: console | production: file
 app.use(morgan(logs));
 
-app.use(function (req, res) {
-  console.log("THE BODY +\n" + JSON.stringify(req.body, null, 2));
-})
+app.use(function (req, res, next) {
+  if (req.body) {
+    console.log("THE BODY ==============================:\n" + JSON.stringify(req.body, null, 2));
+  }
+  next();
+});
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());

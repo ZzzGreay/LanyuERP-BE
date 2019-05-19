@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
-const machineStates = ['初始化', '组装中', '运行', '维护'];
+const machineStates = ['初始化', '组装中', '运行中', '需维护'];
 
 /**
  * 机器
@@ -15,10 +15,14 @@ const MachineSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  // 机器代号 锅炉号
+  alias: {
+    type: String,
+    unique: true,
+  },
   //机器类型
   type: {
     type: String,
-    required: true,
   },
   //机器状态
   state: {
@@ -29,6 +33,7 @@ const MachineSchema = new mongoose.Schema({
   //机器位置
   location: {
     type: mongoose.Schema.Types.ObjectId,
+    required: true,
     ref: 'Site',
   },
   //机器配件
@@ -49,6 +54,7 @@ MachineSchema.method({
     const fields = [
       'id',
       'machineId',
+      'alias',
       'type',
       'state',
       'location',

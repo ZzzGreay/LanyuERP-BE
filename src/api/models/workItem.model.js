@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
-const workTypes = ['沟通', '维护', '修理', '安装', '更换'];
+const workTypes = ['安装', '维护', '维修'];
 
 /**
  * 工作事项 隶属于一个工作日志
@@ -41,6 +41,10 @@ const WorkItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Part',
   },
+  // 安装/更换零件数量
+  count: {
+    type: Number,
+  },
   // 备注
   description: {
     type: String,
@@ -73,6 +77,7 @@ WorkItemSchema.method({
       'machine',
       'part',
       'newPart',
+      'count',
       'description',
       'startTime',
       'endTime',

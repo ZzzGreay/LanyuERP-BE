@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
 /**
@@ -30,8 +30,8 @@ const SiteSchema = new mongoose.Schema({
     type: Date,
   }
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 /**
  * Convenient methods to apply to a row.
@@ -95,12 +95,12 @@ SiteSchema.statics = {
     }
   },
 
-  list({page = 1, perPage = 10000, name}) {
-    const options = omitBy({name}, isNil);
+  list({ page = 1, perPage = 10000, ...props }) {
+    const options = omitBy(props, isNil);
 
     return this
       .find(options)
-      .sort({name: 1})
+      .sort({ name: 1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();

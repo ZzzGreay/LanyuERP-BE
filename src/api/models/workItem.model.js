@@ -42,7 +42,7 @@ const WorkItemSchema = new mongoose.Schema({
     ref: 'Part',
   },
   // 安装/更换零件数量
-  count: {
+  partCount: {
     type: Number,
   },
   // 备注
@@ -77,7 +77,7 @@ WorkItemSchema.method({
       'machine',
       'part',
       'newPart',
-      'count',
+      'partCount',
       'description',
       'startTime',
       'endTime',

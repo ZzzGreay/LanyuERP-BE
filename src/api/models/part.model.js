@@ -9,15 +9,15 @@ const partStates = ['入库'];
  * 配件
  */
 const PartSchema = new mongoose.Schema({
-  //编码
-  partId: {
+  //配件名称
+  name: {
     type: String,
     required: true,
     unique: true,
   },
-  type: {
+  //编码
+  partId: {
     type: String,
-    required: true,
   },
   state: {
     type: String,
@@ -49,8 +49,8 @@ PartSchema.method({
     const transformed = {};
     const fields = [
       'id',
+      'name',
       'partId',
-      'type',
       'state',
       'site',
       'machine',
@@ -112,8 +112,8 @@ PartSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, name, email, role}) {
-    const options = omitBy({name, email, role}, isNil);
+  list({page = 1, perPage = 10000, ...props}) {
+    const options = omitBy(props, isNil);
 
     return this.find(options)
       .sort({createdAt: -1})

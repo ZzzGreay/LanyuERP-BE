@@ -95,7 +95,7 @@ SiteSchema.statics = {
     }
   },
 
-  list({page = 1, perPage = 30, name}) {
+  list({page = 1, perPage = 10000, name}) {
     const options = omitBy({name}, isNil);
 
     return this

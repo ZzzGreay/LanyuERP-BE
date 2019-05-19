@@ -67,3 +67,16 @@ exports.remove = (req, res, next) => {
 
   machine.remove().then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
 };
+
+/**
+ * getMachinesForSite
+ */
+exports.getMachinesForSite = async (req, res, next) => {
+  try {
+    const machinesForSite = await Machine.list({'location': req.params.siteId});
+    const transformedMachinesForSite = machinesForSite.map(machine => machine.transform());
+    res.json({machines: transformedMachinesForSite});
+  } catch (error) {
+    next(error);
+  }
+};

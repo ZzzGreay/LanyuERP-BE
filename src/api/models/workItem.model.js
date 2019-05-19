@@ -134,7 +134,7 @@ WorkItemSchema.statics = {
     }
   },
 
-  async list({page = 1, perPage = 30, ...props}) {
+  async list({page = 1, perPage = 10000, ...props}) {
     const options = omitBy(props, isNil);
 
     return this.find(options)

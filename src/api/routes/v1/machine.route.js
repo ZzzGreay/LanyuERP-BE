@@ -14,9 +14,9 @@ router
   .get(authorize(LOGGED_USER), controller.list)
   .post(authorize(LOGGED_USER), controller.create);
 
-  router
+router
   .route('/site/:siteId')
-  .get(authorize(LOGGED_USER), controller.getWorkItemsInWorkLog);
+  .get(authorize(LOGGED_USER), controller.getMachinesForSite);
 
 router
   .route('/:machineId')

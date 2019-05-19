@@ -117,8 +117,8 @@ MachineSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, name, email, role}) {
-    const options = omitBy({name, email, role}, isNil);
+  list({page = 1, perPage = 10000, ...props}) {
+    const options = omitBy(props, isNil);
 
     return this.find(options)
       .sort({createdAt: -1})

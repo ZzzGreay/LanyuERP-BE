@@ -21,6 +21,10 @@ router
   .get(authorize(LOGGED_USER), controller.getWorkItemsInWorkLog);
 
 router
+  .route('/machine/:machineId')
+  .get(authorize(LOGGED_USER), controller.getWorkItemsForMachine);
+
+router
   .route('/:workItemId')
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)

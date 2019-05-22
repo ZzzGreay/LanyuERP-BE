@@ -84,6 +84,19 @@ exports.getWorkItemsInWorkLog = async (req, res, next) => {
 };
 
 /**
+ * Get workItems for user
+ */
+exports.getWorkItemsForMachine = async (req, res, next) => {
+  try {
+    const workItemsForMachine = await WorkItem.list({'machine': req.params.machineId});
+    const transformedWorkItemsForMachine = workItemsInWorkLog.map(workItem => workItem.transform());
+    res.json({workItems: transformedWorkItemsForMachine});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Get workTypes
  */
 exports.getWorkTypes = async (req, res, next) => {

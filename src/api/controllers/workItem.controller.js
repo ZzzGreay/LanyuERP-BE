@@ -89,7 +89,7 @@ exports.getWorkItemsInWorkLog = async (req, res, next) => {
 exports.getWorkItemsForMachine = async (req, res, next) => {
   try {
     const workItemsForMachine = await WorkItem.list({'machine': req.params.machineId});
-    const transformedWorkItemsForMachine = workItemsInWorkLog.map(workItem => workItem.transform());
+    const transformedWorkItemsForMachine = workItemsForMachine.map(workItem => workItem.transform());
     res.json({workItems: transformedWorkItemsForMachine});
   } catch (error) {
     next(error);

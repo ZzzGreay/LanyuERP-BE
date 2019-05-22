@@ -25,6 +25,10 @@ router
   .get(authorize(LOGGED_USER), controller.getWorkItemsForMachine);
 
 router
+  .route('/owner/:ownerId')
+  .get(authorize(LOGGED_USER), controller.getWorkItemsWithOwner);
+
+router
   .route('/:workItemId')
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)

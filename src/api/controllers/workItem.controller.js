@@ -71,7 +71,7 @@ exports.remove = (req, res, next) => {
 
 
 /**
- * Get workItems for user
+ * Get workItems in the worklog
  */
 exports.getWorkItemsInWorkLog = async (req, res, next) => {
   try {
@@ -84,13 +84,26 @@ exports.getWorkItemsInWorkLog = async (req, res, next) => {
 };
 
 /**
- * Get workItems for user
+ * Get workItems for machine
  */
 exports.getWorkItemsForMachine = async (req, res, next) => {
   try {
     const workItemsForMachine = await WorkItem.list({'machine': req.params.machineId});
     const transformedWorkItemsForMachine = workItemsForMachine.map(workItem => workItem.transform());
     res.json({workItems: transformedWorkItemsForMachine});
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get workItems with the owner
+ */
+exports.getWorkItemsWithOwner = async (req, res, next) => {
+  try {
+    const workItemsWithOwner = await WorkItem.list({'owners': req.params.ownerId});
+    const transformedWorkItemsWithOwner = workItemsWithOwner.map(workItem => workItem.transform());
+    res.json({workItems: transformedWorkItemsWithOwner});
   } catch (error) {
     next(error);
   }

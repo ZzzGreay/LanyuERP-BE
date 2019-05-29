@@ -18,7 +18,7 @@ function generateTokenResponse(user, accessToken) {
 }
 
 /**
- * Returns jwt token if registration was successful
+ * Returns jwt token if registration//login was successful
  * @public
  */
 exports.login = async (req, res, next) => {
@@ -38,7 +38,7 @@ exports.login = async (req, res, next) => {
       return next(error);
     }
   }
-  // if not, register.
+  // if not, auto register.
   const newUser = {
     dingId: dingUser.userid,
     name: dingUser.name,
@@ -55,6 +55,21 @@ exports.login = async (req, res, next) => {
     return next(User.checkDuplicateUsername(error));
   }
 };
+
+/**
+ * Returns jwt token if valid username and password is provided
+ * @public
+ */
+exports.signin = async (req, res, next) => {
+  try {
+    const { user, accessToken } = await User.findAndGenerateToken(req.body)
+    const token = generateTokenResponse(user, accessToken)
+    const userTransformed = user.transform()
+    return res.json({ token, user: userTransformed })
+  } catch (error) {
+    return next(error)
+  }
+}
 
 /**
  * Returns a new jwt when given a valid refresh token

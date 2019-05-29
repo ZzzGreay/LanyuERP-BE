@@ -13,6 +13,10 @@ const SiteSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  // 城市
+  city: {
+    type: String,
+  },
   // 地址
   address: {
     type: String,
@@ -42,6 +46,7 @@ SiteSchema.method({
     const fields = [
       'id',
       'name',
+      'city',
       'address',
       'longitude',
       'latitude',

@@ -22,6 +22,8 @@ const UserSchema = new mongoose.Schema({
     required: true,
     trim: true,
     maxlength: 128,
+    // TODO: remove 'default'
+    default: '123456',
   },
   name: {
     type: String,

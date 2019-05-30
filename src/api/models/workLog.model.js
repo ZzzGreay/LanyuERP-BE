@@ -12,7 +12,7 @@ const WorkLogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
-  // 维修现场
+  // 现场
   site: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Site',

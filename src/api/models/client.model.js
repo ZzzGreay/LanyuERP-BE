@@ -1,53 +1,56 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
-const partStates = ['入库', '使用中', ];
-
 /**
- * 配件
+ * 客户
  */
-const PartSchema = new mongoose.Schema({
-  // 配件名称
+const ClientSchema = new mongoose.Schema({
+  // 客户名称
   name: {
     type: String,
     required: true,
+    unique: true,
   },
-  // 配件编码
-  partId: {
+  // 合同开始时间
+  startDate: {
+    // epoch seconds
+    type: Number,
+  },
+  // 合同结束时间
+  endDate: {
+    // epoch seconds
+    type: Number,
+  },
+  // 承包方式
+  contractType: {
     type: String,
   },
-  // 配件状态
-  state: {
+  // 备注
+  note: {
     type: String,
-    enum: partStates,
-    default: partStates[0],
-  },
-  // 配件所在机器
-  machine: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Machine',
   }
 }, {
   timestamps: true,
 });
 
-// PartSchema.pre('save', async function save(next) {
+// ClientSchema.pre('save', async function save(next) {
 // })
 
 /**
  * Methods
  */
-PartSchema.method({
+ClientSchema.method({
   transform() {
     const transformed = {};
     const fields = [
       'id',
       'name',
-      'partId',
-      'state',
-      'machine',
+      'startDate',
+      'endDate',
+      'contractType',
+      'note',
     ];
 
     fields.forEach((field) => {
@@ -59,19 +62,9 @@ PartSchema.method({
 });
 
 /**
- * Populate reference fields.
- */
-PartSchema.query = {
-  populateRefs() {
-    return this
-      .populate('machine');
-  },
-};
-
-/**
  * Statics
  */
-PartSchema.statics = {
+ClientSchema.statics = {
   /**
    * Get client
    *
@@ -105,15 +98,44 @@ PartSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, ...props}) {
+  list({ page = 1, perPage = 30, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
   },
+
+  /**
+   * Return new validation error
+   * if error is a mongoose duplicate key error
+   *
+   * @param {Error} error
+   * @returns {Error|APIError}
+   */
+  checkDuplicateName(error) {
+    if (error.name === 'MongoError' && error.code === 11000) {
+      return new APIError({
+        message: '客户名称已存在',
+        errors: [
+          {
+            field: 'name',
+            location: 'body',
+            messages: ['客户已经存在'],
+          },
+        ],
+        status: httpStatus.CONFLICT,
+        isPublic: true,
+        stack: error.stack,
+      });
+    }
+    return error;
+  },
 };
 
-module.exports = mongoose.model('Part', PartSchema);
+/**
+ * @typedef Client
+ */
+module.exports = mongoose.model('Client', ClientSchema);

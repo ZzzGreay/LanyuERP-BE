@@ -13,6 +13,10 @@ const SiteSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  // 负责人
+  owner: {
+    type: String,
+  },
   // 城市
   city: {
     type: String,

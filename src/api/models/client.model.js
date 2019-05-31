@@ -46,8 +46,8 @@ ClientSchema.method({
     const fields = [
       'id',
       'name',
-      'startDate',
-      'endDate',
+      'contractStartDate',
+      'contractEndDate',
       'contractType',
       'note',
     ];

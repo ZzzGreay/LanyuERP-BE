@@ -6,7 +6,7 @@ const APIError = require('../utils/APIError');
 const machineStates = ['初始化', '组装中', '运行中', '需维护'];
 
 /**
- * 设备 仪器
+ * 设备仪器
  */
 const MachineSchema = new mongoose.Schema({
   // 机器编码
@@ -41,6 +41,10 @@ const MachineSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Part',
   }],
+
+  /**
+   * 所有文件
+   */
   // 上墙制度
   policyFilePath: {
     type: String,

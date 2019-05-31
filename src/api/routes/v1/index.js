@@ -7,6 +7,7 @@ const workItemRoutes = require('./workItem.route');
 const siteRoutes = require('./site.route');
 const machineRoutes = require('./machine.route');
 const partRoute = require('./part.route');
+const clientRoute = require('./client.route');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use('/workItems', workItemRoutes);
 router.use('/sites', siteRoutes);
 router.use('/machines', machineRoutes);
 router.use('/parts', partRoute);
+router.use('/clients', clientRoute);
 
 module.exports = router;
 

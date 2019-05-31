@@ -7,11 +7,16 @@ const APIError = require('../utils/APIError');
  * 现场
  */
 const SiteSchema = new mongoose.Schema({
-  // 现场名称 （唯一）
+  // 现场名称
   name: {
     type: String,
     unique: true,
     required: true,
+  },
+  // 所属客户
+  client: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Client',
   },
   // 负责人
   owner: {
@@ -25,11 +30,11 @@ const SiteSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  //经度
+  // 经度
   longitude: {
     type: Number,
   },
-  //纬度
+  // 纬度
   latitude: {
     type: Number,
   },
@@ -50,6 +55,7 @@ SiteSchema.method({
     const fields = [
       'id',
       'name',
+      'client',
       'city',
       'address',
       'longitude',

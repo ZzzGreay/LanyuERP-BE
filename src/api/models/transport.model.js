@@ -1,55 +1,36 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const { omitBy, isNil } = require('lodash');
+const {omitBy, isNil} = require('lodash');
 const APIError = require('../utils/APIError');
 
 /**
- * 客户
+ * 作业指导书
  */
-const ClientSchema = new mongoose.Schema({
-  // 客户名称
-  name: {
+const InstructionSchema = new mongoose.Schema({
+  // 指导书主题
+  for: {
     type: String,
     required: true,
     unique: true,
   },
-  // 合同开始时间
-  // 2019-01-01
-  contractStartDate: {
+  // 指导书名称
+  filePath: {
     type: String,
   },
-  // 合同结束时间
-  contractEndDate: {
-    type: String,
-  },
-  // 承包方式
-  contractType: {
-    type: String,
-  },
-  // 备注
-  note: {
-    type: String,
-  }
 }, {
   timestamps: true,
 });
 
-// ClientSchema.pre('save', async function save(next) {
-// })
-
 /**
- * Methods
+ * Convenient methods to apply to a row.
  */
-ClientSchema.method({
+MachineSchema.method({
   transform() {
     const transformed = {};
     const fields = [
       'id',
-      'name',
-      'startDate',
-      'endDate',
-      'contractType',
-      'note',
+      'for',
+      'filePath',
     ];
 
     fields.forEach((field) => {
@@ -63,7 +44,7 @@ ClientSchema.method({
 /**
  * Statics
  */
-ClientSchema.statics = {
+MachineSchema.statics = {
   /**
    * Get client
    *
@@ -97,44 +78,18 @@ ClientSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({ page = 1, perPage = 30, ...props }) {
+  list({page = 1, perPage = 10000, ...props}) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({ createdAt: -1 })
+      .sort({createdAt: -1})
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
   },
-
-  /**
-   * Return new validation error
-   * if error is a mongoose duplicate key error
-   *
-   * @param {Error} error
-   * @returns {Error|APIError}
-   */
-  checkDuplicateName(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
-      return new APIError({
-        message: '客户名称已存在',
-        errors: [
-          {
-            field: 'name',
-            location: 'body',
-            messages: ['客户已经存在'],
-          },
-        ],
-        status: httpStatus.CONFLICT,
-        isPublic: true,
-        stack: error.stack,
-      });
-    }
-    return error;
-  },
 };
 
 /**
- * @typedef Client
+ * @typedef User
  */
-module.exports = mongoose.model('Client', ClientSchema);
+module.exports = mongoose.model('Machine', MachineSchema);

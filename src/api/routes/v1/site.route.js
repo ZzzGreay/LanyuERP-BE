@@ -19,6 +19,7 @@ router
   .route('/:siteId')
   .get(authorize(LOGGED_USER), controller.get)
   .patch(authorize(LOGGED_USER), controller.update)
+  .put(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
 
 

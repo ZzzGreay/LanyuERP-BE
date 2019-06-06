@@ -1,6 +1,6 @@
 const express = require('express');
 const controller = require('../../controllers/part.controller');
-const {authorize, LOGGED_USER} = require('../../middlewares/auth');
+const { authorize, LOGGED_USER } = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -18,6 +18,7 @@ router
   .route('/:partId')
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)
+  .put(authorize(LOGGED_USER), controller.update)
   .post(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
 

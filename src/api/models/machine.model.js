@@ -107,7 +107,7 @@ MachineSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).exec();
+        client = await this.findById(id).populateRefs().exec();
       }
       if (client) {
         return client;
@@ -136,6 +136,7 @@ MachineSchema.statics = {
       .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
+      .populateRefs()
       .exec();
   },
 };

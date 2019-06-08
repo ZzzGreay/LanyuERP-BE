@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
-const partStates = ['入库', '使用中', ];
+const partStates = ['入库', '使用中',];
 
 /**
  * 配件
@@ -30,8 +30,8 @@ const PartSchema = new mongoose.Schema({
     ref: 'Machine',
   }
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 // PartSchema.pre('save', async function save(next) {
 // })
@@ -83,7 +83,7 @@ PartSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).exec();
+        client = await this.findById(id).populateRefs().exec();
       }
       if (client) {
         return client;
@@ -105,13 +105,14 @@ PartSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, ...props}) {
+  list({ page = 1, perPage = 10000, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
+      .populateRefs()
       .exec();
   },
 };

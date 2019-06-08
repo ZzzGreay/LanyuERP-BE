@@ -13,11 +13,6 @@ const SiteSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  // 所属客户
-  client: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Client',
-  },
   // 负责人
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -56,7 +51,6 @@ SiteSchema.method({
     const fields = [
       'id',
       'name',
-      'client',
       'user',
       'city',
       'address',
@@ -79,7 +73,6 @@ SiteSchema.method({
 SiteSchema.query = {
   populateRefs() {
     return this
-      .populate('client')
       .populate('user');
   }
 };
@@ -99,7 +92,7 @@ SiteSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).exec();
+        client = await this.findById(id).populateRefs().exec();
       }
       if (client) {
         return client;
@@ -122,6 +115,7 @@ SiteSchema.statics = {
       .sort({ name: 1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
+      .populateRefs()
       .exec();
   },
 };

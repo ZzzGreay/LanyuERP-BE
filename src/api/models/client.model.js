@@ -31,8 +31,8 @@ const ClientSchema = new mongoose.Schema({
     type: String,
   }
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 // ClientSchema.pre('save', async function save(next) {
 // })

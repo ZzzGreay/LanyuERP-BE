@@ -131,7 +131,7 @@ WorkLogSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).exec();
+        client = await this.findById(id).populateRefs().exec();
       }
       if (client) {
         return client;

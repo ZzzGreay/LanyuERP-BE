@@ -8,7 +8,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const passport = require('passport');
 const routes = require('../api/routes/v1');
-const {logs} = require('./vars');
+const { logs } = require('./vars');
 const jwtStrategy = require('./passport');
 const error = require('../api/middlewares/error');
 
@@ -23,7 +23,7 @@ app.use(morgan(logs));
 
 // parse body params and attache them to req.body
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // hook morganBody to express app
 // morganBody(app);

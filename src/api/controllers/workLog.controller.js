@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const WorkLog = require('../models/workLog.model');
-const {handler: errorHandler} = require('../middlewares/error');
+const { handler: errorHandler } = require('../middlewares/error');
 
 /**
  * Load workLog and append to req.
@@ -9,7 +9,7 @@ const {handler: errorHandler} = require('../middlewares/error');
 exports.load = async (req, res, next, id) => {
   try {
     const workLog = await WorkLog.get(id);
-    req.locals = {workLog};
+    req.locals = { workLog };
     return next();
   } catch (error) {
     return errorHandler(error, req, res);
@@ -32,7 +32,7 @@ exports.create = async (req, res, next) => {
     const workLog = new WorkLog(req.body);
     const savedWorkLog = await workLog.save();
     res.status(httpStatus.CREATED);
-    res.json({createdWorkLog: savedWorkLog.transform()});
+    res.json({ createdWorkLog: savedWorkLog.transform() });
   } catch (error) {
     next(error);
   }
@@ -47,7 +47,7 @@ exports.update = (req, res, next) => {
 
   workLog
     .save()
-    .then(savedWorkLog => res.json({updatedWorkLog: savedWorkLog.transform()}))
+    .then(savedWorkLog => res.json({ updatedWorkLog: savedWorkLog.transform() }))
     .catch(e => next(e));
 };
 
@@ -59,7 +59,7 @@ exports.list = async (req, res, next) => {
   try {
     const workLogs = await WorkLog.list(req.query);
     const transformedWorkLogs = workLogs.map(workLog => workLog.transform());
-    res.json({workLogs: transformedWorkLogs});
+    res.json({ workLogs: transformedWorkLogs });
   } catch (error) {
     next(error);
   }
@@ -82,9 +82,22 @@ exports.remove = (req, res, next) => {
  */
 exports.getWorkLogsForOwner = async (req, res, next) => {
   try {
-    const workLogsForUser = await WorkLog.list({'owners': req.params.ownerId});
+    const workLogsForUser = await WorkLog.list({ 'owners': req.params.ownerId });
     const transformedWorkLogsForUser = workLogsForUser.map(workLog => workLog.transform());
-    res.json({workLogs: transformedWorkLogsForUser});
+    res.json({ workLogs: transformedWorkLogsForUser });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Filter worklogs with request body fields
+ */
+exports.filter = async (req, res, next) => {
+  try {
+    const workLogs = await WorkLog.list(req.body);
+    const transformedWorkLogs = workLogs.map(workLog => workLog.transform());
+    res.json({ workLogs: transformedWorkLogs });
   } catch (error) {
     next(error);
   }

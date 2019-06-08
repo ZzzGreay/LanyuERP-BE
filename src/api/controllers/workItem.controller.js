@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const WorkItem = require('../models/workItem.model');
-const {handler: errorHandler} = require('../middlewares/error');
+const { handler: errorHandler } = require('../middlewares/error');
 
 /**
  * Load workItem and append to req.
@@ -8,7 +8,7 @@ const {handler: errorHandler} = require('../middlewares/error');
 exports.load = async (req, res, next, id) => {
   try {
     const workItem = await WorkItem.get(id);
-    req.locals = {workItem};
+    req.locals = { workItem };
     return next();
   } catch (error) {
     return errorHandler(error, req, res);
@@ -28,7 +28,7 @@ exports.create = async (req, res, next) => {
     const workItem = new WorkItem(req.body);
     const savedWorkItem = await workItem.save();
     res.status(httpStatus.CREATED);
-    res.json({createdWorkItem: savedWorkItem.transform()});
+    res.json({ createdWorkItem: savedWorkItem.transform() });
   } catch (error) {
     next(error);
   }
@@ -41,7 +41,7 @@ exports.update = (req, res, next) => {
   const workItem = Object.assign(req.locals.workItem, req.body);
   workItem
     .save()
-    .then(savedWorkItem => res.json({updatedWorkItem: savedWorkItem.transform()}))
+    .then(savedWorkItem => res.json({ updatedWorkItem: savedWorkItem.transform() }))
     .catch(e => {
       next(e)
     });
@@ -54,7 +54,7 @@ exports.list = async (req, res, next) => {
   try {
     const workItems = await WorkItem.list(req.query);
     const transformedWorkItems = workItems.map(workItem => workItem.transform());
-    res.json({workItems: transformedWorkItems});
+    res.json({ workItems: transformedWorkItems });
   } catch (error) {
     next(error);
   }
@@ -75,9 +75,9 @@ exports.remove = (req, res, next) => {
  */
 exports.getWorkItemsInWorkLog = async (req, res, next) => {
   try {
-    const workItemsInWorkLog = await WorkItem.list({'workLogId': req.params.workLogId});
+    const workItemsInWorkLog = await WorkItem.list({ 'workLogId': req.params.workLogId });
     const transformedWorkItemsInWorkLog = workItemsInWorkLog.map(workItem => workItem.transform());
-    res.json({workItems: transformedWorkItemsInWorkLog});
+    res.json({ workItems: transformedWorkItemsInWorkLog });
   } catch (error) {
     next(error);
   }
@@ -88,9 +88,9 @@ exports.getWorkItemsInWorkLog = async (req, res, next) => {
  */
 exports.getWorkItemsForMachine = async (req, res, next) => {
   try {
-    const workItemsForMachine = await WorkItem.list({'machine': req.params.machineId});
+    const workItemsForMachine = await WorkItem.list({ 'machine': req.params.machineId });
     const transformedWorkItemsForMachine = workItemsForMachine.map(workItem => workItem.transform());
-    res.json({workItems: transformedWorkItemsForMachine});
+    res.json({ workItems: transformedWorkItemsForMachine });
   } catch (error) {
     next(error);
   }
@@ -101,9 +101,23 @@ exports.getWorkItemsForMachine = async (req, res, next) => {
  */
 exports.getWorkItemsWithOwner = async (req, res, next) => {
   try {
-    const workItemsWithOwner = await WorkItem.list({'owners': req.params.ownerId});
+    const workItemsWithOwner = await WorkItem.list({ 'owners': req.params.ownerId });
     const transformedWorkItemsWithOwner = workItemsWithOwner.map(workItem => workItem.transform());
-    res.json({workItems: transformedWorkItemsWithOwner});
+    res.json({ workItems: transformedWorkItemsWithOwner });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+/**
+ * Filter workItems with request body fields
+ */
+exports.filter = async (req, res, next) => {
+  try {
+    const workItems = await WorkItem.list(req.body);
+    const transformedWorkItems = workItems.map(workItem => workItem.transform());
+    res.json({ workItems: transformedWorkItems });
   } catch (error) {
     next(error);
   }
@@ -114,7 +128,7 @@ exports.getWorkItemsWithOwner = async (req, res, next) => {
  */
 exports.getWorkTypes = async (req, res, next) => {
   try {
-    res.json({workTypes: WorkItem.getWorkTypes()});
+    res.json({ workTypes: WorkItem.getWorkTypes() });
   } catch (error) {
     next(error);
   }

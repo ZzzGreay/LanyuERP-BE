@@ -1,6 +1,6 @@
 const express = require('express');
 const controller = require('../../controllers/workLog.controller');
-const {authorize, LOGGED_USER} = require('../../middlewares/auth');
+const { authorize, LOGGED_USER } = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -18,6 +18,10 @@ router
 router
   .route('/owner/:ownerId')
   .get(authorize(LOGGED_USER), controller.getWorkLogsForOwner);
+
+router
+  .route('/filter')
+  .post(authorize(LOGGED_USER), controller.filter);
 
 router
   .route('/:workLogId')

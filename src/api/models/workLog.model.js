@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
+const WORK_LOG_TYPES = ['维护', '维修'];
 /**
- * 工作日志
+ * 工作维护，维修日志
  */
 const WorkLogSchema = new mongoose.Schema({
   // 日志负责人
@@ -17,6 +18,11 @@ const WorkLogSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Site',
     required: true,
+  },
+  // 类型
+  workLogType: {
+    type: String,
+    enum: WORK_LOG_TYPES,
   },
   //前往现场 用车
   toSiteCommute: {
@@ -63,9 +69,16 @@ const WorkLogSchema = new mongoose.Schema({
       type: Date,
     },
   },
+  // 设备安装-维护-维修记录表: axWhWxFilePath
+  // 固定污染源烟气排放连续监测系统日常巡检、校准和维护原始记录表: xjJzWhFilePath
+  // CEMS 零点 / 量程漂移与校准记录表: ldLcPyJzFilePath
+  // CEMS 校验测试记录表 （3个月）: jyCsFilePath
+  // 易耗品更换记录表: yhpGhFilePath
+  // 标准气体更换记录表: bqGhFilePath
+  // CEMS 维修记录表: wxFilePath
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 /**
  * Methods
@@ -76,6 +89,7 @@ WorkLogSchema.method({
     const fields = [
       'id',
       'owners',
+      'workLogType',
       'site',
       'toSiteCommute',
       'leaveSiteCommute',
@@ -97,8 +111,8 @@ WorkLogSchema.query = {
     return this
       .populate('owners')
       .populate('site')
-      .populate({path: 'toSiteCommute.fromSite', select: ['id', 'name']})
-      .populate({path: 'leaveSiteCommute.toSite', select: ['id', 'name']});
+      .populate({ path: 'toSiteCommute.fromSite', select: ['id', 'name'] })
+      .populate({ path: 'leaveSiteCommute.toSite', select: ['id', 'name'] });
   },
 };
 
@@ -139,11 +153,11 @@ WorkLogSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  async list({page = 1, perPage = 10000, ...props}) {
+  async list({ page = 1, perPage = 10000, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({updatedAt: 1})
+      .sort({ updatedAt: 1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .populateRefs()

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
 const workTypes = ['安装', '维护', '维修'];
@@ -10,8 +10,8 @@ const workTypes = ['安装', '维护', '维修'];
  */
 const WorkItemSchema = new mongoose.Schema({
   // 隶属于一个工作日志
-  workLogId: {
-    type: String,
+  workLog: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   // 谁做的 可以多个
@@ -60,8 +60,8 @@ const WorkItemSchema = new mongoose.Schema({
     required: true,
   },
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 /**
  * Methods
@@ -71,7 +71,7 @@ WorkItemSchema.method({
     const transformed = {};
     const fields = [
       'id',
-      'workLogId',
+      'workLog',
       'owners',
       'workType',
       'machine',
@@ -97,6 +97,7 @@ WorkItemSchema.method({
 WorkItemSchema.query = {
   populateRefs() {
     return this
+      .populate('workLog')
       .populate('owners')
       .populate('machine')
       .populate('part')
@@ -134,11 +135,11 @@ WorkItemSchema.statics = {
     }
   },
 
-  async list({page = 1, perPage = 10000, ...props}) {
+  async list({ page = 1, perPage = 10000, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({updatedAt: -1})
+      .sort({ updatedAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .populateRefs()

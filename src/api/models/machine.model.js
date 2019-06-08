@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
+const { omitBy, isNil } = require('lodash');
 const APIError = require('../utils/APIError');
 
 const machineStates = ['初始化', '组装中', '运行中', '需维护'];
@@ -45,49 +45,17 @@ const MachineSchema = new mongoose.Schema({
   /**
    * 所有文件
    */
-  // 上墙制度
-  policyFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 上墙的备案登记表
-  registerFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 运维证书
-  opCertFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 人员上岗证书
-  laborCertFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 说明书
-  manualFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 作业指导书
-  instructionFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 验收材料
-  inspectionFilePath: {
-    type: String,
-    unique: true,
-  },
-  // 标气配置
-  gasConfigFilePath: {
-    type: String,
-    unique: true,
-  },
+  // 上墙制度: policyFilePath
+  // 上墙的备案登记表: registerFilePath
+  // 运维证书: opCertFilePath
+  // 人员上岗证书: laborCertFilePath
+  // 说明书: manualFilePath
+  // 作业指导书: instructionFilePath
+  // 验收材料： inspectionFilePath
+  // 标气配置： gasConfigFilePath
 }, {
-  timestamps: true,
-});
+    timestamps: true,
+  });
 
 /**
  * Convenient methods to apply to a row.
@@ -161,11 +129,11 @@ MachineSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, ...props}) {
+  list({ page = 1, perPage = 10000, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();

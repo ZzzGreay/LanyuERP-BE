@@ -13,6 +13,7 @@ const WorkItemSchema = new mongoose.Schema(
     // 隶属于一个工作日志
     workLog: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "WorkLog",
       required: true
     },
     // 谁做的 可以多个

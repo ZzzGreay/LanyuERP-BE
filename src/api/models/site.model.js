@@ -19,6 +19,11 @@ const SiteSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     },
+    // 负责人
+    client: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Client"
+    },
     // 城市
     city: {
       type: String
@@ -54,7 +59,8 @@ SiteSchema.method({
     const fields = [
       "id",
       "name",
-      "user",
+      "owner",
+      "client",
       "city",
       "address",
       "longitude",
@@ -75,7 +81,7 @@ SiteSchema.method({
  */
 SiteSchema.query = {
   populateRefs() {
-    return this.populate("user");
+    return this.populate("client").populate("owner");
   }
 };
 

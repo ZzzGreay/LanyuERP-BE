@@ -1,21 +1,21 @@
-const express = require('express');
-const controller = require('../../controllers/part.controller');
-const { authorize, LOGGED_USER } = require('../../middlewares/auth');
+const express = require("express");
+const controller = require("../../controllers/part.controller");
+const { authorize, LOGGED_USER } = require("../../middlewares/auth");
 
 const router = express.Router();
 
 /**
  * Load part when API with partId route parameter is hit
  */
-router.param('partId', controller.load);
+router.param("partId", controller.load);
 
 router
-  .route('/')
+  .route("/")
   .get(authorize(LOGGED_USER), controller.list)
   .post(authorize(LOGGED_USER), controller.create);
 
 router
-  .route('/:partId')
+  .route("/:partId")
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)
   .put(authorize(LOGGED_USER), controller.update)

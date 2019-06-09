@@ -1,25 +1,28 @@
-const mongoose = require('mongoose');
-const httpStatus = require('http-status');
-const {omitBy, isNil} = require('lodash');
-const APIError = require('../utils/APIError');
+const mongoose = require("mongoose");
+const httpStatus = require("http-status");
+const { omitBy, isNil } = require("lodash");
+const APIError = require("../utils/APIError");
 
 /**
  * 作业指导书
  */
-const InstructionSchema = new mongoose.Schema({
-  // 指导书主题
-  for: {
-    type: String,
-    required: true,
-    unique: true,
+const InstructionSchema = new mongoose.Schema(
+  {
+    // 指导书主题
+    for: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    // 指导书名称
+    filePath: {
+      type: String
+    }
   },
-  // 指导书名称
-  filePath: {
-    type: String,
-  },
-}, {
-  timestamps: true,
-});
+  {
+    timestamps: true
+  }
+);
 
 /**
  * Convenient methods to apply to a row.
@@ -27,18 +30,14 @@ const InstructionSchema = new mongoose.Schema({
 MachineSchema.method({
   transform() {
     const transformed = {};
-    const fields = [
-      'id',
-      'for',
-      'filePath',
-    ];
+    const fields = ["id", "for", "filePath"];
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
-  },
+  }
 });
 
 /**
@@ -63,8 +62,8 @@ MachineSchema.statics = {
       }
 
       throw new APIError({
-        message: '客户不存在',
-        status: httpStatus.NOT_FOUND,
+        message: "客户不存在",
+        status: httpStatus.NOT_FOUND
       });
     } catch (error) {
       throw error;
@@ -78,18 +77,18 @@ MachineSchema.statics = {
    * @param {number} limit - Limit number of clients to be returned.
    * @returns {Promise<User[]>}
    */
-  list({page = 1, perPage = 10000, ...props}) {
+  list({ page = 1, perPage = 10000, ...props }) {
     const options = omitBy(props, isNil);
 
     return this.find(options)
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .skip(perPage * (page - 1))
       .limit(perPage)
       .exec();
-  },
+  }
 };
 
 /**
  * @typedef User
  */
-module.exports = mongoose.model('Machine', MachineSchema);
+module.exports = mongoose.model("Machine", MachineSchema);

@@ -1,38 +1,41 @@
-const mongoose = require('mongoose');
-const httpStatus = require('http-status');
-const { omitBy, isNil } = require('lodash');
-const APIError = require('../utils/APIError');
+const mongoose = require("mongoose");
+const httpStatus = require("http-status");
+const { omitBy, isNil } = require("lodash");
+const APIError = require("../utils/APIError");
 
 /**
  * 客户
  */
-const ClientSchema = new mongoose.Schema({
-  // 客户名称
-  name: {
-    type: String,
-    required: true,
-    unique: true,
+const ClientSchema = new mongoose.Schema(
+  {
+    // 客户名称
+    name: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    // 合同开始时间
+    // 2019-01-01
+    contractStartDate: {
+      type: String
+    },
+    // 合同结束时间
+    contractEndDate: {
+      type: String
+    },
+    // 承包方式
+    contractType: {
+      type: String
+    },
+    // 备注
+    note: {
+      type: String
+    }
   },
-  // 合同开始时间
-  // 2019-01-01
-  contractStartDate: {
-    type: String,
-  },
-  // 合同结束时间
-  contractEndDate: {
-    type: String,
-  },
-  // 承包方式
-  contractType: {
-    type: String,
-  },
-  // 备注
-  note: {
-    type: String,
+  {
+    timestamps: true
   }
-}, {
-    timestamps: true,
-  });
+);
 
 // ClientSchema.pre('save', async function save(next) {
 // })
@@ -44,20 +47,20 @@ ClientSchema.method({
   transform() {
     const transformed = {};
     const fields = [
-      'id',
-      'name',
-      'contractStartDate',
-      'contractEndDate',
-      'contractType',
-      'note',
+      "id",
+      "name",
+      "contractStartDate",
+      "contractEndDate",
+      "contractType",
+      "note"
     ];
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
-  },
+  }
 });
 
 /**
@@ -82,8 +85,8 @@ ClientSchema.statics = {
       }
 
       throw new APIError({
-        message: '客户不存在',
-        status: httpStatus.NOT_FOUND,
+        message: "客户不存在",
+        status: httpStatus.NOT_FOUND
       });
     } catch (error) {
       throw error;
@@ -115,26 +118,26 @@ ClientSchema.statics = {
    * @returns {Error|APIError}
    */
   checkDuplicateName(error) {
-    if (error.name === 'MongoError' && error.code === 11000) {
+    if (error.name === "MongoError" && error.code === 11000) {
       return new APIError({
-        message: '客户名称已存在',
+        message: "客户名称已存在",
         errors: [
           {
-            field: 'name',
-            location: 'body',
-            messages: ['客户已经存在'],
-          },
+            field: "name",
+            location: "body",
+            messages: ["客户已经存在"]
+          }
         ],
         status: httpStatus.CONFLICT,
         isPublic: true,
-        stack: error.stack,
+        stack: error.stack
       });
     }
     return error;
-  },
+  }
 };
 
 /**
  * @typedef Client
  */
-module.exports = mongoose.model('Client', ClientSchema);
+module.exports = mongoose.model("Client", ClientSchema);

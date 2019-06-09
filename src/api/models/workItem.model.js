@@ -1,67 +1,72 @@
-const mongoose = require('mongoose');
-const httpStatus = require('http-status');
-const { omitBy, isNil } = require('lodash');
-const APIError = require('../utils/APIError');
+const mongoose = require("mongoose");
+const httpStatus = require("http-status");
+const { omitBy, isNil } = require("lodash");
+const APIError = require("../utils/APIError");
 
-const workTypes = ['安装', '维护', '维修'];
+const workTypes = ["安装", "维护", "维修"];
 
 /**
  * 工作事项 隶属于一个工作日志
  */
-const WorkItemSchema = new mongoose.Schema({
-  // 隶属于一个工作日志
-  workLog: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
+const WorkItemSchema = new mongoose.Schema(
+  {
+    // 隶属于一个工作日志
+    workLog: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    },
+    // 谁做的 可以多个
+    owners: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+      }
+    ],
+    // 工作类型
+    workType: {
+      type: String,
+      enum: workTypes,
+      required: true
+    },
+    // 哪个机器
+    machine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Machine"
+    },
+    // 机器上原有零件
+    part: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Part"
+    },
+    // 安装/更换新的零件
+    newPart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Part"
+    },
+    // 安装/更换零件数量
+    partCount: {
+      type: Number
+    },
+    // 备注
+    description: {
+      type: String
+    },
+    // 开始时间
+    startTime: {
+      type: Date,
+      required: true
+    },
+    // 结束时间
+    endTime: {
+      type: Date,
+      required: true
+    }
   },
-  // 谁做的 可以多个
-  owners: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  }],
-  // 工作类型
-  workType: {
-    type: String,
-    enum: workTypes,
-    required: true,
-  },
-  // 哪个机器
-  machine: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Machine',
-  },
-  // 机器上原有零件
-  part: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Part',
-  },
-  // 安装/更换新的零件
-  newPart: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Part',
-  },
-  // 安装/更换零件数量
-  partCount: {
-    type: Number,
-  },
-  // 备注
-  description: {
-    type: String,
-  },
-  // 开始时间
-  startTime: {
-    type: Date,
-    required: true,
-  },
-  // 结束时间
-  endTime: {
-    type: Date,
-    required: true,
-  },
-}, {
-    timestamps: true,
-  });
+  {
+    timestamps: true
+  }
+);
 
 /**
  * Methods
@@ -70,25 +75,25 @@ WorkItemSchema.method({
   transform() {
     const transformed = {};
     const fields = [
-      'id',
-      'workLog',
-      'owners',
-      'workType',
-      'machine',
-      'part',
-      'newPart',
-      'partCount',
-      'description',
-      'startTime',
-      'endTime',
+      "id",
+      "workLog",
+      "owners",
+      "workType",
+      "machine",
+      "part",
+      "newPart",
+      "partCount",
+      "description",
+      "startTime",
+      "endTime"
     ];
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
-  },
+  }
 });
 
 /**
@@ -96,13 +101,12 @@ WorkItemSchema.method({
  */
 WorkItemSchema.query = {
   populateRefs() {
-    return this
-      .populate('workLog')
-      .populate('owners')
-      .populate('machine')
-      .populate('part')
-      .populate('newPart');
-  },
+    return this.populate("workLog")
+      .populate("owners")
+      .populate("machine")
+      .populate("part")
+      .populate("newPart");
+  }
 };
 
 /**
@@ -120,15 +124,17 @@ WorkItemSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).populateRefs().exec();
+        client = await this.findById(id)
+          .populateRefs()
+          .exec();
       }
       if (client) {
         return client;
       }
 
       throw new APIError({
-        message: '事项不存在',
-        status: httpStatus.NOT_FOUND,
+        message: "事项不存在",
+        status: httpStatus.NOT_FOUND
       });
     } catch (error) {
       throw error;
@@ -148,8 +154,7 @@ WorkItemSchema.statics = {
 
   getWorkTypes() {
     return workTypes;
-  },
-
+  }
 };
 
-module.exports = mongoose.model('WorkItem', WorkItemSchema);
+module.exports = mongoose.model("WorkItem", WorkItemSchema);

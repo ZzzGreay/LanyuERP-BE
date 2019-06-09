@@ -1,25 +1,25 @@
-const express = require('express');
-const controller = require('../../controllers/machine.controller');
-const { authorize, LOGGED_USER } = require('../../middlewares/auth');
+const express = require("express");
+const controller = require("../../controllers/machine.controller");
+const { authorize, LOGGED_USER } = require("../../middlewares/auth");
 
 const router = express.Router();
 
 /**
  * Load machine when API with machineId route parameter is hit
  */
-router.param('machineId', controller.load);
+router.param("machineId", controller.load);
 
 router
-  .route('/')
+  .route("/")
   .get(authorize(LOGGED_USER), controller.list)
   .post(authorize(LOGGED_USER), controller.create);
 
 router
-  .route('/site/:siteId')
+  .route("/site/:siteId")
   .get(authorize(LOGGED_USER), controller.getMachinesForSite);
 
 router
-  .route('/:machineId')
+  .route("/:machineId")
   .get(authorize(LOGGED_USER), controller.get)
   // TODO (change to PATCH)
   .put(authorize(LOGGED_USER), controller.update)

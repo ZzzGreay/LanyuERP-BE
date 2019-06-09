@@ -1,61 +1,59 @@
-const mongoose = require('mongoose');
-const httpStatus = require('http-status');
-const { omitBy, isNil } = require('lodash');
-const APIError = require('../utils/APIError');
+const mongoose = require("mongoose");
+const httpStatus = require("http-status");
+const { omitBy, isNil } = require("lodash");
+const APIError = require("../utils/APIError");
 
-const machineStates = ['初始化', '组装中', '运行中', '需维护'];
+const machineStates = ["初始化", "组装中", "运行中", "需维护"];
 
 /**
  * 设备仪器
  */
-const MachineSchema = new mongoose.Schema({
-  // 机器编码
-  machineId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  // 机器代号 锅炉号
-  alias: {
-    type: String,
-    unique: true,
-  },
-  // 机器类型
-  type: {
-    type: String,
-  },
-  // 机器状态
-  state: {
-    type: String,
-    enum: machineStates,
-    default: machineStates[0],
-  },
-  // 机器位置
-  location: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Site',
-  },
-  // 机器配件
-  parts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Part',
-  }],
+const MachineSchema = new mongoose.Schema(
+  {
+    // 机器编码
+    machineId: {
+      type: String,
+      required: true,
+      unique: true
+    },
+    // 机器代号 锅炉号
+    alias: {
+      type: String,
+      unique: true
+    },
+    // 机器类型
+    type: {
+      type: String
+    },
+    // 机器状态
+    state: {
+      type: String,
+      enum: machineStates,
+      default: machineStates[0]
+    },
+    // 机器位置
+    location: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Site"
+    }
 
-  /**
-   * 所有文件
-   */
-  // 上墙制度: policyFilePath
-  // 上墙的备案登记表: registerFilePath
-  // 运维证书: opCertFilePath
-  // 人员上岗证书: laborCertFilePath
-  // 说明书: manualFilePath
-  // 作业指导书: instructionFilePath
-  // 验收材料： inspectionFilePath
-  // 标气配置： gasConfigFilePath
-}, {
-    timestamps: true,
-  });
+    /**
+     * 所有文件
+     */
+    // 上墙制度: policyFilePath
+    // 上墙的备案登记表: registerFilePath
+    // 运维证书: opCertFilePath
+    // 人员上岗证书: laborCertFilePath
+    // 说明书: manualFilePath
+    // 作业指导书: instructionFilePath
+    // 验收材料： inspectionFilePath
+    // 标气配置： gasConfigFilePath
+  },
+  {
+    timestamps: true
+  }
+);
 
 /**
  * Convenient methods to apply to a row.
@@ -63,22 +61,14 @@ const MachineSchema = new mongoose.Schema({
 MachineSchema.method({
   transform() {
     const transformed = {};
-    const fields = [
-      'id',
-      'machineId',
-      'alias',
-      'type',
-      'state',
-      'location',
-      'parts',
-    ];
+    const fields = ["id", "machineId", "alias", "type", "state", "location"];
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
-  },
+  }
 });
 
 /**
@@ -86,10 +76,8 @@ MachineSchema.method({
  */
 MachineSchema.query = {
   populateRefs() {
-    return this
-      .populate('location')
-      .populate('parts');
-  },
+    return this.populate("location");
+  }
 };
 
 /**
@@ -107,15 +95,17 @@ MachineSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).populateRefs().exec();
+        client = await this.findById(id)
+          .populateRefs()
+          .exec();
       }
       if (client) {
         return client;
       }
 
       throw new APIError({
-        message: '客户不存在',
-        status: httpStatus.NOT_FOUND,
+        message: "客户不存在",
+        status: httpStatus.NOT_FOUND
       });
     } catch (error) {
       throw error;
@@ -138,10 +128,10 @@ MachineSchema.statics = {
       .limit(perPage)
       .populateRefs()
       .exec();
-  },
+  }
 };
 
 /**
  * @typedef User
  */
-module.exports = mongoose.model('Machine', MachineSchema);
+module.exports = mongoose.model("Machine", MachineSchema);

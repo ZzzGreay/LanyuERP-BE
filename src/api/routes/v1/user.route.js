@@ -1,17 +1,16 @@
-const express = require('express');
-const controller = require('../../controllers/user.controller');
-const { authorize, ADMIN, LOGGED_USER } = require('../../middlewares/auth');
+const express = require("express");
+const controller = require("../../controllers/user.controller");
+const { authorize, ADMIN, LOGGED_USER } = require("../../middlewares/auth");
 
 const router = express.Router();
 
 /**
  * Load user when API with userId route parameter is hit
  */
-router.param('userId', controller.load);
-
+router.param("userId", controller.load);
 
 router
-  .route('/')
+  .route("/")
   /**
    * @api {get} v1/users List Users
    * @apiDescription Get a list of users
@@ -61,9 +60,8 @@ router
    */
   .post(authorize(ADMIN), controller.create);
 
-
 router
-  .route('/profile')
+  .route("/profile")
   /**
    * @api {get} v1/users/profile User Profile
    * @apiDescription Get logged in user profile information
@@ -84,9 +82,8 @@ router
    */
   .get(authorize(), controller.loggedIn);
 
-
 router
-  .route('/:userId')
+  .route("/:userId")
   /**
    * @api {get} v1/users/:id Get User
    * @apiDescription Get user information
@@ -181,6 +178,5 @@ router
    * @apiError (Not Found 404)    NotFound      User does not exist
    */
   .delete(authorize(LOGGED_USER), controller.remove);
-
 
 module.exports = router;

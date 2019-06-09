@@ -1,37 +1,40 @@
-const mongoose = require('mongoose');
-const httpStatus = require('http-status');
-const { omitBy, isNil } = require('lodash');
-const APIError = require('../utils/APIError');
+const mongoose = require("mongoose");
+const httpStatus = require("http-status");
+const { omitBy, isNil } = require("lodash");
+const APIError = require("../utils/APIError");
 
-const partStates = ['入库', '使用中',];
+const partStates = ["入库", "使用中"];
 
 /**
  * 配件
  */
-const PartSchema = new mongoose.Schema({
-  // 配件名称
-  name: {
-    type: String,
-    required: true,
+const PartSchema = new mongoose.Schema(
+  {
+    // 配件名称
+    name: {
+      type: String,
+      required: true
+    },
+    // 配件编码
+    partId: {
+      type: String
+    },
+    // 配件状态
+    state: {
+      type: String,
+      enum: partStates,
+      default: partStates[0]
+    },
+    // 配件所在机器
+    machine: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Machine"
+    }
   },
-  // 配件编码
-  partId: {
-    type: String,
-  },
-  // 配件状态
-  state: {
-    type: String,
-    enum: partStates,
-    default: partStates[0],
-  },
-  // 配件所在机器
-  machine: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Machine',
+  {
+    timestamps: true
   }
-}, {
-    timestamps: true,
-  });
+);
 
 // PartSchema.pre('save', async function save(next) {
 // })
@@ -42,20 +45,14 @@ const PartSchema = new mongoose.Schema({
 PartSchema.method({
   transform() {
     const transformed = {};
-    const fields = [
-      'id',
-      'name',
-      'partId',
-      'state',
-      'machine',
-    ];
+    const fields = ["id", "name", "partId", "state", "machine"];
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
-  },
+  }
 });
 
 /**
@@ -63,9 +60,8 @@ PartSchema.method({
  */
 PartSchema.query = {
   populateRefs() {
-    return this
-      .populate('machine');
-  },
+    return this.populate("machine");
+  }
 };
 
 /**
@@ -83,15 +79,17 @@ PartSchema.statics = {
       let client;
 
       if (mongoose.Types.ObjectId.isValid(id)) {
-        client = await this.findById(id).populateRefs().exec();
+        client = await this.findById(id)
+          .populateRefs()
+          .exec();
       }
       if (client) {
         return client;
       }
 
       throw new APIError({
-        message: '客户不存在',
-        status: httpStatus.NOT_FOUND,
+        message: "客户不存在",
+        status: httpStatus.NOT_FOUND
       });
     } catch (error) {
       throw error;
@@ -114,7 +112,7 @@ PartSchema.statics = {
       .limit(perPage)
       .populateRefs()
       .exec();
-  },
+  }
 };
 
-module.exports = mongoose.model('Part', PartSchema);
+module.exports = mongoose.model("Part", PartSchema);

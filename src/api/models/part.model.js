@@ -3,7 +3,8 @@ const httpStatus = require("http-status");
 const { omitBy, isNil } = require("lodash");
 const APIError = require("../utils/APIError");
 
-const partStates = ["入库", "使用中"];
+// 这里改了 要更新前端
+const partStates = ["入库", "使用中", "维修中"];
 
 /**
  * 配件

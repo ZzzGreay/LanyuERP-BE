@@ -3,7 +3,14 @@ const httpStatus = require("http-status");
 const { omitBy, isNil } = require("lodash");
 const APIError = require("../utils/APIError");
 
-const machineStates = ["初始化", "组装中", "运行中", "需维护"];
+const machineStates = [
+  "初始化",
+  "组装中",
+  "运行中",
+  "需维护",
+  "维修中",
+  "损坏"
+];
 
 /**
  * 设备仪器

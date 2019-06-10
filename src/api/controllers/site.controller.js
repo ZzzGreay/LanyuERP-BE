@@ -1,6 +1,6 @@
-const httpStatus = require('http-status');
-const Site = require('../models/site.model');
-const {handler: errorHandler} = require('../middlewares/error');
+const httpStatus = require("http-status");
+const Site = require("../models/site.model");
+const { handler: errorHandler } = require("../middlewares/error");
 
 /**
  * Load site and append to req.
@@ -9,7 +9,7 @@ const {handler: errorHandler} = require('../middlewares/error');
 exports.load = async (req, res, next, id) => {
   try {
     const site = await Site.get(id);
-    req.locals = {site};
+    req.locals = { site };
     return next();
   } catch (error) {
     return errorHandler(error, req, res);
@@ -46,8 +46,8 @@ exports.update = (req, res, next) => {
 
   site
     .save()
-    .then(savedSite => res.json(savedSite.transform()))
-    .catch(next(e));
+    .then(savedSite => res.json({ updated: savedSite.transform() }))
+    .catch(e => next(e));
 };
 
 /**
@@ -58,7 +58,7 @@ exports.list = async (req, res, next) => {
   try {
     const sites = await Site.list(req.query);
     const transformedSites = sites.map(site => site.transform());
-    res.json({sites: transformedSites});
+    res.json({ sites: transformedSites });
   } catch (error) {
     next(error);
   }
@@ -71,5 +71,8 @@ exports.list = async (req, res, next) => {
 exports.remove = (req, res, next) => {
   const site = req.locals.site;
 
-  site.remove().then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+  site
+    .remove()
+    .then(() => res.status(httpStatus.NO_CONTENT).end())
+    .catch(e => next(e));
 };

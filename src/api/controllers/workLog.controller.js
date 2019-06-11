@@ -111,7 +111,7 @@ exports.filter = async (req, res, next) => {
 };
 
 /**
- * Save contract file
+ * Save file
  */
 exports.uploadFile = async (req, res, next) => {
   const workLog = req.locals.workLog;
@@ -124,9 +124,15 @@ exports.uploadFile = async (req, res, next) => {
     .then(savedWorkLog =>
       res.json({ updatedWorkLog: savedWorkLog.transform() })
     )
-    .catch(e => next(e));
+    .catch(e => {
+      console.log(JSON.stringify(e));
+      next(e);
+    });
 };
 
+/**
+ * Download file
+ */
 exports.getFile = async (req, res, next) => {
   const workLog = req.locals.workLog;
   const fileType = req.params.fileType;

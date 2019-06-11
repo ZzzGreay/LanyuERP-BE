@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const workLogId = req.params.workLogId;
     const fileType = req.params.fileType;
-    const fileName = `${workLogId}_${fileType}`;
+    const fileName = `${workLogId}_${fileType}.jpg`;
     cb(null, fileName);
   }
 });

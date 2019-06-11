@@ -114,6 +114,8 @@ exports.filter = async (req, res, next) => {
  * Save file
  */
 exports.uploadFile = async (req, res, next) => {
+  console.log(JSON.stringify(req));
+
   const workLog = req.locals.workLog;
   const fileType = req.params.fileType;
 

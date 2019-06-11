@@ -1,16 +1,16 @@
-const express = require('express');
-const morgan = require('morgan');
-const morganBody = require('morgan-body');
-const bodyParser = require('body-parser');
-const compress = require('compression');
-const methodOverride = require('method-override');
-const cors = require('cors');
-const helmet = require('helmet');
-const passport = require('passport');
-const routes = require('../api/routes/v1');
-const { logs } = require('./vars');
-const jwtStrategy = require('./passport');
-const error = require('../api/middlewares/error');
+const express = require("express");
+const morgan = require("morgan");
+const morganBody = require("morgan-body");
+const bodyParser = require("body-parser");
+const compress = require("compression");
+const methodOverride = require("method-override");
+const cors = require("cors");
+const helmet = require("helmet");
+const passport = require("passport");
+const routes = require("../api/routes/v1");
+const { logs } = require("./vars");
+const jwtStrategy = require("./passport");
+const error = require("../api/middlewares/error");
 
 /**
  * Express instance
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // hook morganBody to express app
-// morganBody(app);
+morganBody(app);
 
 // gzip compression
 app.use(compress());
@@ -43,10 +43,10 @@ app.use(cors());
 
 // enable jwt authentication
 app.use(passport.initialize());
-passport.use('jwt', jwtStrategy);
+passport.use("jwt", jwtStrategy);
 
 // mount api v1 routes
-app.use('/v1', routes);
+app.use("/v1", routes);
 
 // if error is not an instanceOf APIError, convert it.
 app.use(error.converter);

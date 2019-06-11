@@ -125,7 +125,6 @@ exports.uploadFile = async (req, res, next) => {
       res.json({ updatedWorkLog: savedWorkLog.transform() })
     )
     .catch(e => {
-      console.log(JSON.stringify(e));
       next(e);
     });
 };

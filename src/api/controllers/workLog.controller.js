@@ -138,5 +138,5 @@ exports.getFile = async (req, res, next) => {
   const fileType = req.params.fileType;
 
   const fileName = `${workLog.id}_${fileType}`;
-  res.download(path.join(__dirname, `../../../files/${fileType}/${fileName}`));
+  res.download(path.join(__dirname, `../../../files/${fileName}`));
 };

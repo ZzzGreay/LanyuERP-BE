@@ -3,6 +3,7 @@ const httpStatus = require("http-status");
 const { omitBy, isNil } = require("lodash");
 const APIError = require("../utils/APIError");
 
+// 改这之后也要改前端
 const machineStates = [
   "初始化",
   "组装中",

@@ -1,8 +1,25 @@
 const express = require("express");
 const controller = require("../../controllers/workLog.controller");
 const { authorize, LOGGED_USER } = require("../../middlewares/auth");
+const multer = require("multer");
+const path = require("path");
 
 const router = express.Router();
+
+// update in workLog.controller if the file paths are changed
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const fileType = req.params.fileType;
+    cb(null, path.join(__dirname, `../../../../files/${fileType}/`));
+  },
+  filename: (req, file, cb) => {
+    const workLogId = req.params.workLogId;
+    const fileType = req.params.fileType;
+    const fileName = `${workLogId}_${fileType}`;
+    cb(null, fileName);
+  }
+});
+const upload = multer({ storage });
 
 /**
  * Load workLog when API with workLogId route parameter is hit
@@ -26,5 +43,10 @@ router
   // TODO (change to PATCH)
   .post(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
+
+router
+  .route("/:workLogId/upload/:fileType")
+  .post(authorize(LOGGED_USER), upload.single(), controller.uploadFile)
+  .get(authorize(LOGGED_USER), controller.getFile);
 
 module.exports = router;

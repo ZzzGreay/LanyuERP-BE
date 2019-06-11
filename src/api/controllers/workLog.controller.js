@@ -1,6 +1,7 @@
-const httpStatus = require('http-status');
-const WorkLog = require('../models/workLog.model');
-const { handler: errorHandler } = require('../middlewares/error');
+const httpStatus = require("http-status");
+const WorkLog = require("../models/workLog.model");
+const { handler: errorHandler } = require("../middlewares/error");
+const path = require("path");
 
 /**
  * Load workLog and append to req.
@@ -47,7 +48,9 @@ exports.update = (req, res, next) => {
 
   workLog
     .save()
-    .then(savedWorkLog => res.json({ updatedWorkLog: savedWorkLog.transform() }))
+    .then(savedWorkLog =>
+      res.json({ updatedWorkLog: savedWorkLog.transform() })
+    )
     .catch(e => next(e));
 };
 
@@ -72,9 +75,11 @@ exports.list = async (req, res, next) => {
 exports.remove = (req, res, next) => {
   const workLog = req.locals.workLog;
 
-  workLog.remove().then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+  workLog
+    .remove()
+    .then(() => res.status(httpStatus.NO_CONTENT).end())
+    .catch(e => next(e));
 };
-
 
 /**
  * Get workLogs for user
@@ -82,8 +87,10 @@ exports.remove = (req, res, next) => {
  */
 exports.getWorkLogsForOwner = async (req, res, next) => {
   try {
-    const workLogsForUser = await WorkLog.list({ 'owners': req.params.ownerId });
-    const transformedWorkLogsForUser = workLogsForUser.map(workLog => workLog.transform());
+    const workLogsForUser = await WorkLog.list({ owners: req.params.ownerId });
+    const transformedWorkLogsForUser = workLogsForUser.map(workLog =>
+      workLog.transform()
+    );
     res.json({ workLogs: transformedWorkLogsForUser });
   } catch (error) {
     next(error);
@@ -101,4 +108,29 @@ exports.filter = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * Save contract file
+ */
+exports.uploadFile = async (req, res, next) => {
+  const workLog = req.locals.workLog;
+  const fileType = req.params.fileType;
+
+  workLog.setUploaded(fileType);
+
+  workLog
+    .save()
+    .then(savedWorkLog =>
+      res.json({ updatedWorkLog: savedWorkLog.transform() })
+    )
+    .catch(e => next(e));
+};
+
+exports.getFile = async (req, res, next) => {
+  const workLog = req.locals.workLog;
+  const fileType = req.params.fileType;
+
+  const fileName = `${workLog.id}_${fileType}`;
+  res.download(path.join(__dirname, `../../../files/${fileType}/${fileName}`));
 };

@@ -46,7 +46,7 @@ router
 
 router
   .route("/:workLogId/upload/:fileType")
-  .post(authorize(LOGGED_USER), upload.single(), controller.uploadFile)
+  .post(authorize(LOGGED_USER), upload.any(), controller.uploadFile)
   .get(authorize(LOGGED_USER), controller.getFile);
 
 module.exports = router;

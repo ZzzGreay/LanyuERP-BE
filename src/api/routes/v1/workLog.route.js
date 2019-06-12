@@ -45,7 +45,7 @@ router
   .delete(authorize(LOGGED_USER), controller.remove);
 
 router
-  .route("/:workLogId/upload/:fileType")
+  .route("/:workLogId/file/:fileType")
   .post(authorize(LOGGED_USER), upload.any(), controller.uploadFile)
   .get(authorize(LOGGED_USER), controller.getFile);
 

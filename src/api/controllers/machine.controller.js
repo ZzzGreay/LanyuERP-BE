@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
 const Machine = require("../models/machine.model");
 const { handler: errorHandler } = require("../middlewares/error");
+const path = require("path");
 
 /**
  * Load machine and append to req.

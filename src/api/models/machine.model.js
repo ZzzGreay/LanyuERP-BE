@@ -44,19 +44,51 @@ const MachineSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Site"
-    }
+    },
 
     /**
      * 所有文件
      */
     // 上墙制度: policyFilePath
+    shangqiangzhidu: {
+      type: Boolean,
+      default: false
+    },
     // 上墙的备案登记表: registerFilePath
+    beiandengji: {
+      type: Boolean,
+      default: false
+    },
     // 运维证书: opCertFilePath
+    yunweizhengshu: {
+      type: Boolean,
+      default: false
+    },
     // 人员上岗证书: laborCertFilePath
+    shanggangzhengshu: {
+      type: Boolean,
+      default: false
+    },
     // 说明书: manualFilePath
+    shuomingshu: {
+      type: Boolean,
+      default: false
+    },
     // 作业指导书: instructionFilePath
+    zuoyezhidaoshu: {
+      type: Boolean,
+      default: false
+    },
     // 验收材料： inspectionFilePath
+    yanshoucailiao: {
+      type: Boolean,
+      default: false
+    },
     // 标气配置： gasConfigFilePath
+    biaoqipeizhi: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true
@@ -69,13 +101,32 @@ const MachineSchema = new mongoose.Schema(
 MachineSchema.method({
   transform() {
     const transformed = {};
-    const fields = ["id", "machineId", "alias", "type", "state", "location"];
+    const fields = [
+      "id",
+      "machineId",
+      "alias",
+      "type",
+      "state",
+      "location",
+      "shangqiangzhidu",
+      "beiandengji",
+      "yunweizhengshu",
+      "shanggangzhengshu",
+      "shuomingshu",
+      "zuoyezhidaoshu",
+      "yanshoucailiao",
+      "biaoqipeizhi"
+    ];
 
     fields.forEach(field => {
       transformed[field] = this[field];
     });
 
     return transformed;
+  },
+
+  setUploaded(fileType) {
+    this[fileType] = true;
   }
 });
 

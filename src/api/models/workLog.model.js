@@ -27,29 +27,28 @@ const WorkLogSchema = new mongoose.Schema(
       type: String,
       enum: WORK_LOG_TYPES
     },
+    // 日期
+    date: {
+      type: Date,
+    },
     //前往现场 用车
     toSiteCommute: {
       _id: false,
       fromSite: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Site",
-        required: true
       },
       carId: {
         type: String,
-        required: true
       },
       startKilos: {
         type: Number,
-        required: true
       },
       endKilos: {
         type: Number,
-        required: true
       },
       date: {
         type: Date,
-        required: true
       }
     },
     //离开现场 用车
@@ -124,6 +123,7 @@ WorkLogSchema.method({
       "owners",
       "workLogType",
       "site",
+      "date",
       "toSiteCommute",
       "leaveSiteCommute",
       "sanlianbiao",

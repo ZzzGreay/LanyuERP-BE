@@ -43,5 +43,5 @@ jspm_packages
 .idea
 .vscode
 
-files/contracts/*
-!files/contracts/.gitkeep
+files/*
+!files/machine/.gitkeep

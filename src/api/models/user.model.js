@@ -13,14 +13,12 @@ const UserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
       trim: true,
       lowercase: true,
       unique: true
     },
     password: {
       type: String,
-      required: true,
       trim: true,
       maxlength: 128,
       // TODO: remove 'default'
@@ -28,13 +26,11 @@ const UserSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
       unique: true
     },
     lastLoginTime: {
       // epoch seconds
       type: Number,
-      required: true
     },
     //钉钉ID, 在注册时填入
     dingId: {

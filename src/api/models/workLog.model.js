@@ -71,40 +71,46 @@ const WorkLogSchema = new mongoose.Schema(
         type: Date
       }
     },
+     /**
+     * 所有文件
+     * 0代表没有上传文件
+     * n代表每个有n个文件
+     * n最多是5
+     */
     // 设备安装-维护-维修记录表:
     sanlianbiao: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 固定污染源烟气排放连续监测系统日常巡检、校准和维护原始记录表:
     richangxunjian: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // CEMS 零点 / 量程漂移与校准记录表: ldLcPyJzFilePath
     jiaozhun: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // CEMS 校验测试记录表 （3个月）: jyCsFilePath
     jiaoyan: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 易耗品更换记录表: yhpGhFilePath
     yihao: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 标准气体更换记录表: bqGhFilePath
     biaoqi: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // CEMS 维修记录表: wxFilePath
     weixiu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     }
   },
   {

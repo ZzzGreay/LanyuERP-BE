@@ -15,7 +15,9 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const machineId = req.params.machineId;
     const fileType = req.params.fileType;
-    const fileName = `${machineId}_${fileType}.jpg`;
+    const number = req.params.number;
+
+    const fileName = `${machineId}_${fileType}_${number}.jpg`;    
     cb(null, fileName);
   }
 });
@@ -44,7 +46,7 @@ router
   .delete(authorize(LOGGED_USER), controller.remove);
 
 router
-  .route("/:machineId/file/:fileType")
+  .route("/:machineId/file/:fileType/:number")
   .post(authorize(LOGGED_USER), upload.any(), controller.uploadFile)
   .get(authorize(LOGGED_USER), controller.getFile);
 

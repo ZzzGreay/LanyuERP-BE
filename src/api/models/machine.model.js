@@ -48,46 +48,49 @@ const MachineSchema = new mongoose.Schema(
 
     /**
      * 所有文件
+     * 0代表没有上传文件
+     * n代表每个有n个文件
+     * n最多是5
      */
     // 上墙制度: policyFilePath
     shangqiangzhidu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 上墙的备案登记表: registerFilePath
     beiandengji: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 运维证书: opCertFilePath
     yunweizhengshu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 人员上岗证书: laborCertFilePath
     shanggangzhengshu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 说明书: manualFilePath
     shuomingshu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 作业指导书: instructionFilePath
     zuoyezhidaoshu: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 验收材料： inspectionFilePath
     yanshoucailiao: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     },
     // 标气配置： gasConfigFilePath
     biaoqipeizhi: {
-      type: Boolean,
-      default: false
+      type: Number,
+      default: 0
     }
   },
   {
@@ -125,8 +128,8 @@ MachineSchema.method({
     return transformed;
   },
 
-  setUploaded(fileType) {
-    this[fileType] = true;
+  setFileCount(fileType, count) {
+    this[fileType] = count;
   }
 });
 

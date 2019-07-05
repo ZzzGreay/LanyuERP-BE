@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const Machine = require("../models/machine.model");
 const { handler: errorHandler } = require("../middlewares/error");
 const path = require("path");
+const fs = require('fs');
 
 /**
  * Load machine and append to req.
@@ -95,8 +96,22 @@ exports.getMachinesForSite = async (req, res, next) => {
 exports.uploadFile = async (req, res, next) => {
   const machine = req.locals.machine;
   const fileType = req.params.fileType;
+  const number = req.params.number;
 
-  machine.setUploaded(fileType);
+  // if this is a new batch of files for a image type, and the image has already been upload.
+  // we will need to remove all existing files
+  if (number == 0 && machine[fileType] > 0) {
+    for (let i = 1; i <= machine[fileType]; i++) {
+      let fileName = `${machine.id}_${fileType}_${i}`;
+      let filePath = path.join(__dirname, `../../../files/machine/${fileName}.jpg`)
+      fs.unlink(filePath, (err) => {
+        if (err) next(err);
+        console.log(`successfully deleted ${filePath}`);
+      });
+    }
+  }
+
+  machine.setFileCount(fileType, number);
 
   machine
     .save()
@@ -114,7 +129,8 @@ exports.uploadFile = async (req, res, next) => {
 exports.getFile = async (req, res, next) => {
   const machine = req.locals.machine;
   const fileType = req.params.fileType;
+  const number = req.params.number;
 
-  const fileName = `${machine.id}_${fileType}`;
+  const fileName = `${machine.id}_${fileType}_${number}`;
   res.download(path.join(__dirname, `../../../files/machine/${fileName}.jpg`));
 };

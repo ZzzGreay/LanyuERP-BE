@@ -2,6 +2,7 @@ const httpStatus = require("http-status");
 const WorkLog = require("../models/workLog.model");
 const { handler: errorHandler } = require("../middlewares/error");
 const path = require("path");
+const fs = require('fs');
 
 /**
  * Load workLog and append to req.
@@ -116,8 +117,22 @@ exports.filter = async (req, res, next) => {
 exports.uploadFile = async (req, res, next) => {
   const workLog = req.locals.workLog;
   const fileType = req.params.fileType;
+  const number = req.params.number;
 
-  workLog.setUploaded(fileType);
+  // if this is a new batch of files for a image type, and the image has already been upload.
+  // we will need to remove all existing files
+  if (number == 0 && workLog[fileType] > 0) {
+    for (let i = 1; i <= workLog[fileType]; i++) {
+      let fileName = `${workLog.id}_${fileType}_${i}`;
+      let filePath = path.join(__dirname, `../../../files/${fileName}.jpg`)
+      fs.unlink(filePath, (err) => {
+        if (err) next(err);
+        console.log(`successfully deleted ${filePath}`);
+      });
+    }
+  }
+
+  machine.setFileCount(fileType, number);
 
   workLog
     .save()
@@ -135,7 +150,8 @@ exports.uploadFile = async (req, res, next) => {
 exports.getFile = async (req, res, next) => {
   const workLog = req.locals.workLog;
   const fileType = req.params.fileType;
+  const number = req.params.number;
 
-  const fileName = `${workLog.id}_${fileType}`;
+  const fileName = `${workLog.id}_${fileType}_${number}`;
   res.download(path.join(__dirname, `../../../files/${fileName}.jpg`));
 };

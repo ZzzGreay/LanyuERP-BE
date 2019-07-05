@@ -29,26 +29,26 @@ const WorkLogSchema = new mongoose.Schema(
     },
     // 日期
     date: {
-      type: Date,
+      type: Date
     },
     //前往现场 用车
     toSiteCommute: {
       _id: false,
       fromSite: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Site",
+        ref: "Site"
       },
       carId: {
-        type: String,
+        type: String
       },
       startKilos: {
-        type: Number,
+        type: Number
       },
       endKilos: {
-        type: Number,
+        type: Number
       },
       date: {
-        type: Date,
+        type: Date
       }
     },
     //离开现场 用车
@@ -71,7 +71,7 @@ const WorkLogSchema = new mongoose.Schema(
         type: Date
       }
     },
-     /**
+    /**
      * 所有文件
      * 0代表没有上传文件
      * n代表每个有n个文件
@@ -148,8 +148,8 @@ WorkLogSchema.method({
     return transformed;
   },
 
-  setUploaded(fileType) {
-    this[fileType] = true;
+  setFileCount(fileType, count) {
+    this[fileType] = count;
   }
 });
 

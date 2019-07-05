@@ -42,6 +42,7 @@ exports.login = async (req, res, next) => {
   const newUser = {
     dingId: dingUser.userid,
     name: dingUser.name,
+    username: dingUser.name,
     lastLoginTime: moment().unix(),
   };
   try {

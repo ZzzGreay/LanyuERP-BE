@@ -16,8 +16,9 @@ const storage = multer.diskStorage({
     const machineId = req.params.machineId;
     const fileType = req.params.fileType;
     const number = req.params.number;
+    const fileName = `${machineId}_${fileType}_${number}.jpg`;
 
-    const fileName = `${machineId}_${fileType}_${number}.jpg`;    
+    console.log(`saving ${fileName}`);
     cb(null, fileName);
   }
 });
@@ -44,6 +45,10 @@ router
   .put(authorize(LOGGED_USER), controller.update)
   .post(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
+
+router
+  .route("/:machineId/file/:fileType/check")
+  .post(authorize(LOGGED_USER), controller.checkExistingFiles);
 
 router
   .route("/:machineId/file/:fileType/:number")

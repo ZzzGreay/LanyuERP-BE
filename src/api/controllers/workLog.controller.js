@@ -2,7 +2,7 @@ const httpStatus = require("http-status");
 const WorkLog = require("../models/workLog.model");
 const { handler: errorHandler } = require("../middlewares/error");
 const path = require("path");
-const fs = require('fs');
+const fs = require("fs");
 
 /**
  * Load workLog and append to req.
@@ -112,6 +112,38 @@ exports.filter = async (req, res, next) => {
 };
 
 /**
+ * check existing files
+ */
+exports.checkExistingFiles = async (req, res, next) => {
+  const workLog = req.locals.workLog;
+  const fileType = req.params.fileType;
+
+  // if this is a new batch of files for a image type, and the image has already been upload.
+  // we will need to remove all existing files
+  if (workLog[fileType] > 0) {
+    for (let i = 1; i <= workLog[fileType]; i++) {
+      let fileName = `${workLog.id}_${fileType}_${i}`;
+      let filePath = path.join(__dirname, `../../../files/${fileName}.jpg`);
+      fs.unlinkSync(filePath, err => {
+        if (err) next(err);
+        console.log(`successfully deleted ${filePath}`);
+      });
+    }
+  }
+
+  workLog.setFileCount(fileType, 0);
+
+  workLog
+    .save()
+    .then(updatedWorkLog =>
+      res.json({ updatedWorkLog: updatedWorkLog.transform() })
+    )
+    .catch(e => {
+      next(e);
+    });
+};
+
+/**
  * Save file
  */
 exports.uploadFile = async (req, res, next) => {
@@ -119,25 +151,15 @@ exports.uploadFile = async (req, res, next) => {
   const fileType = req.params.fileType;
   const number = req.params.number;
 
-  // if this is a new batch of files for a image type, and the image has already been upload.
-  // we will need to remove all existing files
-  if (number == 0 && workLog[fileType] > 0) {
-    for (let i = 1; i <= workLog[fileType]; i++) {
-      let fileName = `${workLog.id}_${fileType}_${i}`;
-      let filePath = path.join(__dirname, `../../../files/${fileName}.jpg`)
-      fs.unlink(filePath, (err) => {
-        if (err) next(err);
-        console.log(`successfully deleted ${filePath}`);
-      });
-    }
+  // HACK TODO FIXME
+  if (workLog[fileType] < number) {
+    workLog.setFileCount(fileType, number);
   }
-
-  machine.setFileCount(fileType, number);
 
   workLog
     .save()
-    .then(savedWorkLog =>
-      res.json({ updatedWorkLog: savedWorkLog.transform() })
+    .then(updatedWorkLog =>
+      res.json({ updatedWorkLog: updatedWorkLog.transform() })
     )
     .catch(e => {
       next(e);

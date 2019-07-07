@@ -17,6 +17,8 @@ const storage = multer.diskStorage({
     const fileType = req.params.fileType;
     const number = req.params.number;
     const fileName = `${workLogId}_${fileType}_${number}.jpg`;
+
+    console.log(`saving ${fileName}`);
     cb(null, fileName);
   }
 });
@@ -44,6 +46,10 @@ router
   // TODO (change to PATCH)
   .post(authorize(LOGGED_USER), controller.update)
   .delete(authorize(LOGGED_USER), controller.remove);
+
+router
+  .route("/:workLogId/file/:fileType/check")
+  .post(authorize(LOGGED_USER), controller.checkExistingFiles);
 
 router
   .route("/:workLogId/file/:fileType/:number")
